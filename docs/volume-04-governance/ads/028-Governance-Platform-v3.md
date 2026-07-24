@@ -405,61 +405,469 @@ Workflow Kernel->>Governance API: Evaluate Governance
 
 Governance API->>Policy Manager: Evaluate Policies
 
-Policy Manager->>Risk Engine: Calculate Risk
+Policy Manager->>Risk Engine: Assess Risk
 
-Risk Engine->>Approval Engine: Approval Required?
+Risk Engine->>Compliance Manager: Validate Compliance
+
+Compliance Manager->>Approval Engine: Approval Required?
 
 Approval Engine-->>Governance API: Governance Decision
 
-Governance API-->>Workflow Kernel: Approved
+Governance API-->>Workflow Kernel: Decision
 ```
 
 ---
 
-# Event Ordering
+# Contract Validation
+
+Every governance request follows a deterministic validation pipeline.
 
 ```text
-GovernanceContextCreated
+Receive Request
 
 ↓
 
-PolicyEvaluated
+Schema Validation
 
 ↓
 
-RiskCalculated
+Authentication
 
 ↓
 
-GovernanceDecisionGenerated
+Authorization
 
 ↓
 
-ApprovalRequested
+Governance Context Validation
 
 ↓
 
-ApprovalGranted
+Policy Evaluation
+
+↓
+
+Approval Resolution
+
+↓
+
+Governance Decision
 ```
+
+Governance evaluation begins only after successful validation.
 
 ---
 
-# Event Metadata
+# Validation Rules
 
-Every event contains
+Every request MUST satisfy
+
+| Rule | Description |
+|------|-------------|
+| API Version | Supported contract version |
+| Authentication | Valid enterprise identity |
+| Authorization | Authorized requester |
+| Governance Context | Valid context version |
+| Policy Version | Active governance policy |
+| Compliance | Regulatory requirements satisfied |
+| Financial Profile | Budget information available |
+| Tenant | Tenant isolation enforced |
+
+Validation failures terminate the request.
+
+---
+
+# Authentication
+
+Authentication is delegated to the Identity Plane.
+
+Supported methods
+
+- OAuth 2.1
+- OpenID Connect
+- Mutual TLS
+- SPIFFE / SPIRE
+- Enterprise SSO
+
+Every governance request originates from a verified identity.
+
+---
+
+# Authorization
+
+Authorization evaluates
+
+- Organization
+- Business Unit
+- Governance Role
+- Policy Scope
+- Risk Profile
+- Compliance Profile
+
+Decision
+
+```text
+Allow
+
+↓
+
+Proceed
+
+Deny
+
+↓
+
+Reject
+
+Require Approval
+
+↓
+
+Approval Workflow
+```
+
+Every authorization remains auditable.
+
+---
+
+# Policy Evaluation Record
+
+Every policy evaluation produces an immutable Policy Evaluation Record.
 
 ```yaml
-eventId:
-decisionId:
-contextId:
-approvalId:
-workflowId:
-traceId:
-correlationId:
-timestamp:
-schemaVersion:
+policyEvaluationRecord:
+
+  evaluationId:
+
+  governanceContext:
+
+  evaluatedPolicies:
+
+  matchedRules:
+
+  skippedRules:
+
+  overriddenRules:
+
+  evaluationDuration:
+
+  resultingRiskScore:
+
+  resultingComplianceStatus:
+
+  resultingDecision:
+
+  timestamp:
+```
+
+Policy Evaluation Records explain governance decisions.
+
+---
+
+# Runtime Sequence
+
+```mermaid
+sequenceDiagram
+
+Workflow Kernel->>Governance API: Evaluate Request
+
+Governance API->>Policy Manager: Load Policies
+
+Policy Manager->>Risk Engine: Assess Risk
+
+Risk Engine->>Compliance Manager: Validate Compliance
+
+Compliance Manager->>Approval Engine: Approval Required?
+
+Approval Engine-->>Governance API: Governance Decision
+
+Governance API-->>Workflow Kernel: Decision
 ```
 
 ---
 
-# End of Part 1
+# Retry Policy
+
+Retryable operations
+
+| Operation | Retry |
+|-----------|------:|
+| Policy Store Timeout | Yes |
+| Approval Service Timeout | Yes |
+| Compliance Service Timeout | Yes |
+| Notification Timeout | Yes |
+| Invalid Governance Context | No |
+| Invalid Policy Version | No |
+| Authentication Failure | No |
+
+Retry schedule
+
+```text
+1 s
+
+↓
+
+2 s
+
+↓
+
+4 s
+
+↓
+
+8 s
+
+↓
+
+Escalation
+```
+
+Retries remain bounded.
+
+---
+
+# Circuit Breakers
+
+Governance services isolate unhealthy components.
+
+```text
+Policy Service Failure
+
+↓
+
+Retry
+
+↓
+
+Failure Threshold
+
+↓
+
+Circuit Open
+
+↓
+
+Fallback Read Replica
+
+↓
+
+Recovery Probe
+
+↓
+
+Circuit Closed
+```
+
+Governance failures remain isolated.
+
+---
+
+# Distributed Tracing
+
+Every governance operation includes
+
+- Trace ID
+- Governance Context ID
+- Governance Decision ID
+- Approval Record ID
+- Policy Evaluation Record ID
+
+Trace Flow
+
+```text
+Governance API
+
+↓
+
+Policy Manager
+
+↓
+
+Risk Engine
+
+↓
+
+Compliance Manager
+
+↓
+
+Approval Engine
+
+↓
+
+Governance Ledger
+```
+
+Every governance stage contributes trace spans.
+
+---
+
+# Prometheus Metrics
+
+```text
+governance_requests_total
+
+governance_decisions_total
+
+policy_evaluations_total
+
+approval_records_total
+
+approval_latency_seconds
+
+policy_evaluation_duration_seconds
+
+exception_requests_total
+
+governance_validation_failures_total
+
+risk_assessment_duration_seconds
+
+financial_budget_checks_total
+```
+
+---
+
+# Structured Logging
+
+Example
+
+```json
+{
+  "traceId":"trace-15001",
+  "governanceContext":"GCTX-021",
+  "decisionId":"GOV-2026-015",
+  "approvalRecord":"APR-008",
+  "policyEvaluation":"PE-114",
+  "decision":"Approved",
+  "riskScore":28
+}
+```
+
+Logs remain immutable and correlated.
+
+---
+
+# Audit Records
+
+Every governance operation records
+
+- Governance Context
+- Governance Decision
+- Policy Evaluation Record
+- Approval Record
+- Workflow ID
+- Trace ID
+- Timestamp
+- Policy Version
+
+Audit history is append-only.
+
+---
+
+# Reference Standards & Specifications
+
+The Governance Platform aligns with
+
+| Standard | Purpose |
+|----------|---------|
+| OpenAPI 3.1 | REST APIs |
+| gRPC | Internal communication |
+| OAuth 2.1 | Authentication |
+| OpenID Connect | Identity federation |
+| OpenTelemetry | Distributed tracing |
+| ISO 37301 | Compliance management |
+| COSO ERM | Enterprise risk management |
+
+---
+
+# Architecture Decision Records
+
+## ADR-028-06
+
+### Decision
+
+Represent every policy evaluation as a Policy Evaluation Record.
+
+### Status
+
+Accepted
+
+### Reason
+
+Policy Evaluation Records provide explainability, replayability, and governance transparency.
+
+---
+
+## ADR-028-07
+
+### Decision
+
+Separate governance decisions from approval evidence.
+
+### Status
+
+Accepted
+
+### Reason
+
+Approval Records document organizational authorization independently of governance evaluation.
+
+---
+
+## ADR-028-08
+
+### Decision
+
+Evaluate governance using immutable Governance Contexts.
+
+### Status
+
+Accepted
+
+### Reason
+
+Immutable inputs guarantee deterministic governance outcomes and simplify auditing.
+
+---
+
+# Operational Readiness Scorecard
+
+| Capability | Status |
+|------------|--------|
+| Governance Context | ✅ Required |
+| Governance Decisions | ✅ Required |
+| Approval Records | ✅ Required |
+| Policy Evaluation Records | ✅ Required |
+| Compliance Validation | ✅ Required |
+| Financial Governance | ✅ Required |
+| Immutable Audit | ✅ Required |
+| Deterministic Governance | ✅ Required |
+
+---
+
+# Related Documents
+
+ADS-021-v5 — Workflow Kernel
+
+ADS-022-v5 — Identity & Trust Plane
+
+ADS-023-v5 — Enterprise Memory Plane
+
+ADS-024-v5 — Agent Execution Platform
+
+ADS-025-v5 — Compute & Infrastructure Platform
+
+ADS-026-v5 — Security Platform
+
+ADS-027-v5 — Observability Platform
+
+ADS-028-v1 — Governance Platform
+
+ADS-028-v2 — Governance Algorithms & Policy Framework
+
+ADS-028-v4 — Runtime & Governance Infrastructure
+
+---
+
+# End of Document
