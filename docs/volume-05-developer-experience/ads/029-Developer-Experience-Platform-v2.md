@@ -231,3 +231,311 @@ Debug sessions remain isolated.
 ---
 
 # End of Part 1
+
+# ALG-029-006
+
+## Testing Orchestration
+
+The Testing Framework coordinates
+
+- Unit Tests
+- Integration Tests
+- Workflow Tests
+- Agent Tests
+- Security Tests
+- Performance Tests
+- End-to-End Tests
+
+Testing executes automatically according to project configuration.
+
+---
+
+# ALG-029-007
+
+## Packaging
+
+Packaging prepares
+
+- Workflow Bundles
+- Agent Packages
+- Plugin Packages
+- Deployment Manifests
+- Container Images
+- Documentation
+
+Packaging remains deterministic.
+
+---
+
+# ALG-029-008
+
+## Deployment Preparation
+
+Deployment preparation validates
+
+- Project Configuration
+- Dependencies
+- Security Policies
+- Governance Policies
+- Infrastructure Profiles
+- Build Artifacts
+
+Deployment preparation never modifies production.
+
+---
+
+# Development Session
+
+Every active engineering task creates a Development Session.
+
+```yaml
+developmentSession:
+
+  sessionId:
+
+  workspaceId:
+
+  developer:
+
+  activeBranch:
+
+  activeWorkflow:
+
+  debugSession:
+
+  simulationRun:
+
+  openedArtifacts:
+
+  activePlugins:
+
+  startedAt:
+
+  lastActivity:
+```
+
+Development Sessions remain isolated from other developers.
+
+---
+
+# Testing Matrix
+
+| Test Type | Purpose |
+|-----------|----------|
+| Unit | Component validation |
+| Integration | Service interaction |
+| Workflow | Workflow execution |
+| Agent | Agent behavior |
+| Security | Policy verification |
+| Performance | Scalability |
+| End-to-End | Complete system validation |
+
+Every project defines a testing strategy.
+
+---
+
+# Build Profiles
+
+Supported profiles
+
+| Profile | Purpose |
+|---------|----------|
+| Development | Fast local iteration |
+| Debug | Enhanced diagnostics |
+| Staging | Pre-production validation |
+| Production | Release builds |
+
+Profiles remain reproducible.
+
+---
+
+# Developer State Machine
+
+```mermaid
+stateDiagram-v2
+
+[*] --> WorkspaceCreated
+
+WorkspaceCreated --> ProjectGenerated
+
+ProjectGenerated --> DependenciesResolved
+
+DependenciesResolved --> Simulation
+
+Simulation --> Testing
+
+Testing --> Debugging
+
+Debugging --> Packaging
+
+Packaging --> DeploymentReady
+
+DeploymentReady --> [*]
+```
+
+Every engineering workflow follows this lifecycle.
+
+---
+
+# CLI Commands
+
+Standard commands
+
+```text
+platform init
+
+platform simulate
+
+platform test
+
+platform debug
+
+platform package
+
+platform deploy --dry-run
+
+platform doctor
+
+platform plugin install
+```
+
+CLI behavior remains consistent across SDKs.
+
+---
+
+# Developer Metrics
+
+```text
+workspace_initialization_seconds
+
+project_generation_total
+
+simulation_runs_total
+
+debug_sessions_total
+
+test_execution_seconds
+
+package_generation_total
+
+deployment_preparation_total
+
+developer_feedback_latency
+
+workspace_sync_total
+
+plugin_installations_total
+```
+
+---
+
+# Structured Logging
+
+Example
+
+```json
+{
+  "workspaceId":"WS-104",
+  "sessionId":"DEV-220",
+  "project":"payment-platform",
+  "simulationProfile":"Full",
+  "testsPassed":148,
+  "packageReady":true,
+  "timestamp":"2026-08-15T14:11:23Z"
+}
+```
+
+Logs remain reproducible and correlated.
+
+---
+
+# Architecture Decision Records
+
+## ADR-029-03
+
+### Decision
+
+Represent reproducible environments as Developer Workspaces.
+
+### Status
+
+Accepted
+
+### Reason
+
+Versioned workspaces eliminate configuration drift and simplify onboarding.
+
+---
+
+## ADR-029-04
+
+### Decision
+
+Represent active engineering activity as Development Sessions.
+
+### Status
+
+Accepted
+
+### Reason
+
+Separating persistent environments from active work improves collaboration, replayability, and diagnostics.
+
+---
+
+## ADR-029-05
+
+### Decision
+
+Standardize all project creation through versioned templates.
+
+### Status
+
+Accepted
+
+### Reason
+
+Standardized templates improve consistency, maintainability, and enterprise governance.
+
+---
+
+# Operational Readiness Scorecard
+
+| Capability | Status |
+|------------|--------|
+| Developer Workspaces | ✅ Required |
+| Development Sessions | ✅ Required |
+| Local Simulation | ✅ Required |
+| Automated Testing | ✅ Required |
+| Debugging | ✅ Required |
+| Deterministic Packaging | ✅ Required |
+| Deployment Preparation | ✅ Required |
+| Versioned Templates | ✅ Required |
+
+---
+
+# Related Documents
+
+ADS-021-v5 — Workflow Kernel
+
+ADS-022-v5 — Identity & Trust Plane
+
+ADS-023-v5 — Enterprise Memory Plane
+
+ADS-024-v5 — Agent Execution Platform
+
+ADS-025-v5 — Compute & Infrastructure Platform
+
+ADS-026-v5 — Security Platform
+
+ADS-027-v5 — Observability Platform
+
+ADS-028-v5 — Governance Platform
+
+ADS-029-v1 — Developer Experience Platform
+
+ADS-029-v3 — APIs, Events & Contracts
+
+---
+
+# End of Document
