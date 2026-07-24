@@ -529,28 +529,566 @@ Breaking changes always require a new major version.
 
 ---
 
+# Contract Validation
+
+Every request entering the Workflow State Machine MUST pass contract validation before execution.
+
+Validation follows a deterministic pipeline.
+
+```text
+Receive Request
+
+↓
+
+Schema Validation
+
+↓
+
+Authentication
+
+↓
+
+Authorization
+
+↓
+
+Workflow Validation
+
+↓
+
+Policy Validation
+
+↓
+
+Transition Validation
+
+↓
+
+Execution
+```
+
+A failure at any stage terminates the request.
+
+---
+
+# Validation Rules
+
+Every request MUST satisfy all validation rules.
+
+| Rule | Description |
+|------|-------------|
+| Schema Version | Supported contract version |
+| Authentication | Valid identity token |
+| Authorization | Required permissions |
+| Workflow Exists | Valid Workflow ID |
+| Current State | Existing active state |
+| Requested Transition | Allowed transition |
+| Policy Compliance | Organization policies |
+| Lease Ownership | Valid worker lease |
+| Checkpoint Integrity | Verified checkpoint |
+
+Validation failures are never retried automatically.
+
+---
+
+# Authentication
+
+Authentication is delegated to the Enterprise Identity Plane.
+
+Supported methods
+
+- OAuth2
+- OpenID Connect (OIDC)
+- Mutual TLS (mTLS)
+- Service Accounts
+- Enterprise SSO
+
+Example
+
+```http
+Authorization:
+
+Bearer eyJhbGci...
+```
+
+The Workflow State Machine never validates credentials directly.
+
+---
+
+# Authorization
+
+Workflow operations are protected using Role-Based Access Control (RBAC).
+
+| Role | Permissions |
+|------|-------------|
+| Viewer | Read workflows |
+| Developer | Create workflows |
+| Project Owner | Pause / Resume |
+| Workflow Manager | Transition states |
+| Organization Admin | Cancel workflows |
+| Platform Admin | Full workflow control |
+
+Every privileged operation generates an audit record.
+
+---
+
+# Multi-Tenant Isolation
+
+Every workflow belongs to one tenant.
+
+```text
+Tenant
+
+↓
+
+Organization
+
+↓
+
+Project
+
+↓
+
+Repository
+
+↓
+
+Workflow
+```
+
+Cross-tenant operations are prohibited.
+
+---
+
+# Idempotency
+
+Workflow creation and state transitions are idempotent.
+
+Every mutation request MUST include
+
+```
+Idempotency-Key
+```
+
+Example
+
+```http
+POST /workflow/v1/workflows
+
+Idempotency-Key:
+f5b9d4f2-8d71-4dcb-a1b6-9f38eaf927b4
+```
+
+Duplicate requests return the original workflow.
+
+---
+
+# Rate Limiting
+
+The API Gateway enforces request limits.
+
+| Endpoint | Limit |
+|-----------|-------:|
+| Create Workflow | 20/min |
+| Get Workflow | 500/min |
+| Pause Workflow | 60/min |
+| Resume Workflow | 60/min |
+| Transition State | 300/min |
+
+Limits are configurable.
+
+---
+
+# Workflow State Machine
+
+```mermaid
+stateDiagram-v2
+
+[*] --> Created
+
+Created --> Waiting
+
+Waiting --> Scheduled
+
+Scheduled --> Running
+
+Running --> Paused
+
+Paused --> Running
+
+Running --> Completed
+
+Running --> Failed
+
+Failed --> Retry
+
+Retry --> Running
+
+Failed --> Rollback
+
+Rollback --> Running
+
+Failed --> Escalated
+
+Escalated --> [*]
+
+Completed --> [*]
+```
+
+Transitions outside this graph are invalid.
+
+---
+
+# Runtime Sequence
+
+```mermaid
+sequenceDiagram
+
+Client->>Gateway: Transition Request
+
+Gateway->>Identity Plane: Authenticate
+
+Identity Plane-->>Gateway: Success
+
+Gateway->>Workflow Manager: Transition
+
+Workflow Manager->>Policy Engine: Validate
+
+Policy Engine-->>Workflow Manager: Approved
+
+Workflow Manager->>Checkpoint Manager: Persist
+
+Checkpoint Manager-->>Workflow Manager: Stored
+
+Workflow Manager->>Kafka: WorkflowTransitioned
+
+Kafka-->>Execution Plane: Continue Execution
+```
+
+---
+
+# Retry Policy
+
+Retries depend on failure classification.
+
+| Failure | Retry |
+|----------|------:|
+| Network Timeout | Yes |
+| Queue Timeout | Yes |
+| Worker Failure | Yes |
+| Lease Expired | Yes |
+| Invalid Transition | No |
+| Authorization Failure | No |
+| Policy Violation | No |
+
+Retry schedule
+
+```text
+1 Second
+
+↓
+
+2 Seconds
+
+↓
+
+4 Seconds
+
+↓
+
+8 Seconds
+
+↓
+
+Escalation
+```
+
+---
+
+# Circuit Breakers
+
+Repeated failures isolate unhealthy workflow components.
+
+```text
+Failure
+
+↓
+
+Retry
+
+↓
+
+Threshold Reached
+
+↓
+
+Circuit Open
+
+↓
+
+Traffic Redirected
+
+↓
+
+Health Check
+
+↓
+
+Circuit Closed
+```
+
+Circuit breakers prevent cascading failures.
+
+---
+
+# Workflow Event Contracts
+
+Every state transition publishes an immutable event.
+
+```text
+WorkflowCreated
+
+↓
+
+WorkflowScheduled
+
+↓
+
+WorkflowStarted
+
+↓
+
+WorkflowCheckpointCreated
+
+↓
+
+WorkflowPaused
+
+↓
+
+WorkflowResumed
+
+↓
+
+WorkflowCompleted
+```
+
+Events are append-only.
+
+They are never modified or deleted.
+
+---
+
+# Distributed Tracing
+
+Every workflow receives
+
+- Trace ID
+- Correlation ID
+- Causation ID
+
+Trace flow
+
+```text
+Gateway
+
+↓
+
+Workflow Manager
+
+↓
+
+Planner
+
+↓
+
+TDD
+
+↓
+
+Execution
+
+↓
+
+QA
+
+↓
+
+Deployment
+```
+
+Every subsystem contributes spans.
+
+---
+
+# Prometheus Metrics
+
+```text
+workflow_created_total
+
+workflow_completed_total
+
+workflow_failed_total
+
+workflow_paused_total
+
+workflow_resume_total
+
+workflow_retry_total
+
+workflow_transition_total
+
+workflow_scheduler_latency
+
+workflow_checkpoint_total
+
+workflow_active_total
+```
+
+Metrics feed the Enterprise Observability Platform.
+
+---
+
+# Structured Logging
+
+Example
+
+```json
+{
+  "traceId":"trace-501",
+  "workflowId":"WF-2026-001",
+  "state":"Running",
+  "previousState":"Scheduled",
+  "owner":"ExecutionPlane",
+  "durationMs":142,
+  "status":"Success"
+}
+```
+
+All logs follow structured JSON.
+
+---
+
+# Audit Records
+
+Every workflow action records
+
+- Workflow ID
+- Current State
+- Previous State
+- Transition
+- User ID
+- Worker ID
+- Timestamp
+- Policy Version
+- Trace ID
+
+Audit history is immutable.
+
+---
+
+# Security Requirements
+
+The Workflow State Machine
+
+MUST
+
+- Authenticate every request
+- Validate every transition
+- Verify workflow ownership
+- Record audit logs
+- Encrypt all communications
+
+The Workflow State Machine MUST NOT
+
+- Skip validation
+- Execute unauthorized transitions
+- Modify workflow history
+- Share tenant context
+
+---
+
+# Architecture Decision Records
+
+## ADR-021-06
+
+### Decision
+
+Treat workflow transitions as immutable events.
+
+### Status
+
+Accepted
+
+### Reason
+
+Immutable events enable replay, auditing, event sourcing, and forensic analysis.
+
+---
+
+## ADR-021-07
+
+### Decision
+
+Require idempotent workflow mutations.
+
+### Status
+
+Accepted
+
+### Reason
+
+Distributed systems must tolerate retries without creating duplicate workflows.
+
+---
+
+## ADR-021-08
+
+### Decision
+
+Expose both REST and gRPC interfaces.
+
+### Status
+
+Accepted
+
+### Reason
+
+REST supports external integrations while gRPC provides efficient internal communication.
+
+---
+
+# Operational Readiness Scorecard
+
+| Capability | Status |
+|------------|--------|
+| API Versioning | ✅ Required |
+| Event Contracts | ✅ Required |
+| Distributed Tracing | ✅ Required |
+| Multi-Tenant Isolation | ✅ Required |
+| Idempotency | ✅ Required |
+| Replay Support | ✅ Required |
+| Auditability | ✅ Required |
+| Contract Stability | ✅ Required |
+
+---
+
 # Related Documents
 
-ADS-021-v1
+ADS-019-v5 — Autonomous Planning Engine Walkthrough
 
-ADS-021-v2
+ADS-020-v5 — Agentic TDD Walkthrough
 
-ADS-021-v4
+ADS-021-v1 — Architecture
 
-ADS-039
+ADS-021-v2 — State Transition Algorithms
 
-ADS-040
+ADS-021-v4 — Runtime & Orchestration
 
----
+ADS-039 — Failure Recovery
 
-# Next Document
-
-ADS-021-v4
-
-**Runtime & Orchestration**
-
-Defines coordinator services, scheduler implementation, distributed leases, queue topology, runtime deployment, worker coordination, checkpoint persistence, autoscaling, disaster recovery, observability, and production infrastructure.
+ADS-043 — Enterprise Observability
 
 ---
 
-# End of Part 1
+# End of Document
