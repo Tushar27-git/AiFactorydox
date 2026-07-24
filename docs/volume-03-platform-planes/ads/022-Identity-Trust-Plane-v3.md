@@ -456,4 +456,531 @@ signature:
 
 ---
 
-# End of Part 1
+# Contract Validation
+
+Every request entering the Identity Plane MUST pass a deterministic validation pipeline before processing.
+
+```text
+Receive Request
+
+↓
+
+Schema Validation
+
+↓
+
+Identity Authentication
+
+↓
+
+Certificate Validation
+
+↓
+
+Policy Evaluation
+
+↓
+
+Authorization Decision
+
+↓
+
+Trust Score Evaluation
+
+↓
+
+Execution
+```
+
+Any failed stage terminates the request.
+
+---
+
+# Validation Rules
+
+Every request MUST satisfy all validation requirements.
+
+| Rule | Description |
+|------|-------------|
+| API Version | Supported version |
+| Authentication | Valid identity token |
+| Certificate | Valid X.509 / SPIFFE identity |
+| Policy | Organization policies satisfied |
+| Trust Score | Above required threshold |
+| Tenant | Valid tenant context |
+| Resource | Existing resource |
+| Signature | Cryptographically verified |
+
+---
+
+# Authentication
+
+Supported authentication methods
+
+- OAuth 2.1
+- OpenID Connect (OIDC)
+- SPIFFE / SPIRE
+- Mutual TLS (mTLS)
+- Service Accounts
+- Passkeys (WebAuthn)
+- API Keys (restricted automation)
+
+Authentication only proves identity ownership.
+
+---
+
+# Authorization
+
+Authorization evaluates
+
+- RBAC
+- ABAC
+- Organization Policies
+- Workflow Context
+- Risk Level
+- Requested Capability
+
+Decision Matrix
+
+```text
+Allow
+
+↓
+
+Execute
+
+Deny
+
+↓
+
+Reject
+
+Escalate
+
+↓
+
+Human Approval
+```
+
+Authorization is performed for every privileged action.
+
+---
+
+# Multi-Tenant Isolation
+
+Every identity belongs to exactly one tenant.
+
+```text
+Tenant
+
+↓
+
+Organization
+
+↓
+
+Project
+
+↓
+
+Identity
+
+↓
+
+Resources
+```
+
+Cross-tenant access is denied unless explicitly delegated through organizational trust policies.
+
+---
+
+# Idempotency
+
+Identity operations are idempotent.
+
+Required header
+
+```http
+Idempotency-Key:
+```
+
+Supported operations
+
+- Identity Creation
+- Certificate Rotation
+- Token Issuance
+- Identity Revocation
+
+Duplicate requests return the original result.
+
+---
+
+# Rate Limiting
+
+The API Gateway enforces request quotas.
+
+| Endpoint | Limit |
+|-----------|-------:|
+| Authenticate | 500/min |
+| Authorize | 1000/min |
+| Register Identity | 50/min |
+| Rotate Certificate | 30/min |
+| Revoke Identity | 20/min |
+
+Rate limits are configurable per organization.
+
+---
+
+# Trust Evaluation State Machine
+
+```mermaid
+stateDiagram-v2
+
+[*] --> Unknown
+
+Unknown --> Authenticated
+
+Authenticated --> Authorized
+
+Authorized --> Trusted
+
+Trusted --> Monitored
+
+Monitored --> Trusted
+
+Trusted --> Revoked
+
+Revoked --> Archived
+
+Archived --> [*]
+```
+
+Trust evolves continuously during execution.
+
+---
+
+# Runtime Sequence
+
+```mermaid
+sequenceDiagram
+
+Client->>Gateway: Authenticate
+
+Gateway->>Identity Service: Validate Token
+
+Identity Service->>Certificate Authority: Verify Certificate
+
+Certificate Authority-->>Identity Service: Valid
+
+Identity Service->>Policy Engine: Evaluate
+
+Policy Engine-->>Identity Service: Allow
+
+Identity Service->>Trust Engine: Calculate Score
+
+Trust Engine-->>Identity Service: Score = 96
+
+Identity Service->>Kafka: IdentityAuthenticated
+
+Kafka-->>Workflow Manager: Continue Execution
+```
+
+---
+
+# Retry Policy
+
+Retryable failures
+
+| Failure | Retry |
+|----------|------:|
+| Network Timeout | Yes |
+| Certificate Authority Timeout | Yes |
+| Token Cache Miss | Yes |
+| Identity Store Timeout | Yes |
+| Invalid Certificate | No |
+| Invalid Signature | No |
+| Policy Violation | No |
+
+Retry Schedule
+
+```text
+1 Second
+
+↓
+
+2 Seconds
+
+↓
+
+4 Seconds
+
+↓
+
+8 Seconds
+
+↓
+
+Escalation
+```
+
+Retries are bounded.
+
+---
+
+# Circuit Breakers
+
+The Identity Plane isolates unhealthy services.
+
+```text
+Failure
+
+↓
+
+Retry
+
+↓
+
+Threshold Reached
+
+↓
+
+Circuit Open
+
+↓
+
+Traffic Redirected
+
+↓
+
+Health Probe
+
+↓
+
+Circuit Closed
+```
+
+This prevents cascading authentication failures.
+
+---
+
+# Distributed Tracing
+
+Every identity operation includes
+
+- Trace ID
+- Correlation ID
+- Identity ID
+- Tenant ID
+- Workflow ID
+
+Trace Flow
+
+```text
+Gateway
+
+↓
+
+Identity Plane
+
+↓
+
+Policy Engine
+
+↓
+
+Trust Engine
+
+↓
+
+Workflow State Machine
+```
+
+Every service contributes spans.
+
+---
+
+# Prometheus Metrics
+
+```text
+identity_authentication_total
+
+identity_authorization_total
+
+identity_revoked_total
+
+identity_rotation_total
+
+identity_trust_score_average
+
+identity_policy_denied_total
+
+identity_certificate_expiration_total
+
+identity_authentication_latency_seconds
+
+identity_authorization_latency_seconds
+
+identity_active_sessions
+```
+
+---
+
+# Structured Logging
+
+Example
+
+```json
+{
+  "traceId":"trace-2201",
+  "identityId":"ID-2026-001",
+  "entityType":"AI_AGENT",
+  "operation":"Authenticate",
+  "trustScore":96,
+  "status":"Success",
+  "durationMs":24
+}
+```
+
+Logs are immutable and structured.
+
+---
+
+# Audit Records
+
+Every operation records
+
+- Identity ID
+- Entity Type
+- Authentication Method
+- Authorization Decision
+- Trust Score
+- Policy Version
+- Timestamp
+- Trace ID
+- Certificate Version
+
+Audit records are append-only.
+
+---
+
+# Security Requirements
+
+The Identity Plane MUST
+
+- Authenticate every request
+- Verify every certificate
+- Recalculate trust continuously
+- Rotate credentials automatically
+- Encrypt all communications
+- Maintain immutable audit trails
+
+The Identity Plane MUST NOT
+
+- Issue long-lived credentials
+- Share identities
+- Store plaintext secrets
+- Bypass policy evaluation
+
+---
+
+# Reference Standards & Specifications
+
+The implementation aligns with the following standards where applicable.
+
+| Standard | Purpose |
+|----------|---------|
+| OAuth 2.1 | Authorization Framework |
+| OpenID Connect | Authentication |
+| SPIFFE / SPIRE | Workload Identity |
+| RFC 7519 | JSON Web Tokens (JWT) |
+| RFC 7515 | JSON Web Signature (JWS) |
+| RFC 7517 | JSON Web Key (JWK) |
+| X.509 | Certificate Infrastructure |
+| WebAuthn / FIDO2 | Passwordless Authentication |
+| NIST SP 800-207 | Zero Trust Architecture |
+| Open Policy Agent (OPA) | Policy-as-Code |
+
+---
+
+# Architecture Decision Records
+
+## ADR-022-06
+
+### Decision
+
+Every trust decision must be recalculated at request time.
+
+### Status
+
+Accepted
+
+### Reason
+
+Trust changes as operational context changes.
+
+---
+
+## ADR-022-07
+
+### Decision
+
+Adopt short-lived workload credentials.
+
+### Status
+
+Accepted
+
+### Reason
+
+Reducing credential lifetime minimizes compromise impact.
+
+---
+
+## ADR-022-08
+
+### Decision
+
+Use cryptographically verifiable identities for every platform entity.
+
+### Status
+
+Accepted
+
+### Reason
+
+Cryptographic identity provides strong authentication and non-repudiation.
+
+---
+
+# Operational Readiness Scorecard
+
+| Capability | Status |
+|------------|--------|
+| Zero Trust | ✅ Required |
+| Continuous Verification | ✅ Required |
+| Workload Identity | ✅ Required |
+| Certificate Rotation | ✅ Required |
+| Dynamic Authorization | ✅ Required |
+| Multi-Tenant Isolation | ✅ Required |
+| Full Auditability | ✅ Required |
+| Standards Compliance | ✅ Required |
+
+---
+
+# Related Documents
+
+ADS-021-v5 — Workflow State Machine
+
+ADS-022-v1 — Identity & Trust Plane Architecture
+
+ADS-022-v2 — Trust Algorithms & Identity Model
+
+ADS-022-v4 — Runtime & Identity Infrastructure
+
+ADS-025 — Security Plane
+
+ADS-026 — Observability Plane
+
+---
+
+# End of Document
