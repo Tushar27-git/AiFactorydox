@@ -7,6 +7,8 @@
 >
 > **Version:** 2.0.0
 >
+> **Status:** Draft
+>
 > **Classification:** Enterprise Platform Plane
 >
 > **Importance:** CRITICAL
@@ -458,4 +460,540 @@ schemaVersion:
 
 ---
 
-# End of Part 1
+# Contract Validation
+
+Every request entering the Memory Plane follows a deterministic validation pipeline.
+
+```text
+Receive Request
+
+↓
+
+Schema Validation
+
+↓
+
+Authentication
+
+↓
+
+Authorization
+
+↓
+
+Tenant Validation
+
+↓
+
+Governance Validation
+
+↓
+
+Memory Planning
+
+↓
+
+Retrieval
+
+↓
+
+Context Assembly
+```
+
+Any validation failure terminates the request.
+
+---
+
+# Validation Rules
+
+Every request MUST satisfy
+
+| Rule | Description |
+|------|-------------|
+| API Version | Supported contract version |
+| Authentication | Valid identity |
+| Authorization | Required permission |
+| Tenant Isolation | Same tenant |
+| Data Classification | Access permitted |
+| Governance | Memory policy satisfied |
+| Memory Version | Valid version |
+| Integrity Hash | Verified |
+
+Requests failing validation are rejected.
+
+---
+
+# Authentication
+
+Authentication is delegated to the Identity Plane.
+
+Supported methods
+
+- OAuth2.1
+- OIDC
+- SPIFFE
+- mTLS
+- Service Accounts
+
+Memory services never authenticate users directly.
+
+---
+
+# Authorization
+
+Authorization evaluates
+
+- RBAC
+- ABAC
+- Project Membership
+- Workflow Ownership
+- Data Classification
+- Organizational Policies
+
+Decision
+
+```text
+Allow
+
+↓
+
+Retrieve
+
+Deny
+
+↓
+
+Reject
+
+Escalate
+
+↓
+
+Human Approval
+```
+
+Every authorization decision is audited.
+
+---
+
+# Memory Query Planner
+
+Every request first enters the Query Planner.
+
+Responsibilities
+
+- Intent Detection
+- Context Budget Calculation
+- Retrieval Strategy Selection
+- Parallel Query Planning
+- Cost Estimation
+- Latency Prediction
+
+Planner Output
+
+```yaml
+intent:
+memoryDomains:
+retrievalStrategies:
+estimatedLatency:
+estimatedObjects:
+contextBudget:
+```
+
+The planner minimizes unnecessary retrieval.
+
+---
+
+# Retrieval Strategies
+
+Supported retrieval modes
+
+| Strategy | Purpose |
+|----------|---------|
+| GraphRAG | Relationship traversal |
+| Vector Search | Semantic similarity |
+| Keyword Search | Exact lookup |
+| AST Traversal | Source code |
+| Metadata Search | Structured filters |
+| Hybrid | Combined retrieval |
+
+Strategies may execute in parallel.
+
+---
+
+# Multi-Tenant Isolation
+
+Memory is partitioned by tenant.
+
+```text
+Tenant
+
+↓
+
+Organization
+
+↓
+
+Project
+
+↓
+
+Memory Namespace
+
+↓
+
+Objects
+```
+
+Cross-tenant retrieval is prohibited unless explicitly delegated.
+
+---
+
+# Memory Governance
+
+Every retrieved object passes through governance.
+
+Validation includes
+
+- Classification
+- Retention Policy
+- Legal Hold
+- PII Detection
+- Integrity Verification
+- Provenance Validation
+
+Only compliant memory is returned.
+
+---
+
+# Memory Provenance
+
+Every retrieved object includes provenance.
+
+```yaml
+memoryId:
+origin:
+createdBy:
+verifiedBy:
+workflow:
+project:
+tenant:
+version:
+confidence:
+integrityHash:
+```
+
+Agents receive provenance alongside content.
+
+---
+
+# Runtime Sequence
+
+```mermaid
+sequenceDiagram
+
+Planner->>Memory API: Retrieve Context
+
+Memory API->>Query Planner: Analyze Request
+
+Query Planner->>Memory Orchestrator: Execution Plan
+
+Memory Orchestrator->>Graph Engine: Graph Query
+
+Memory Orchestrator->>Vector Store: Semantic Search
+
+Memory Orchestrator->>AST Index: Code Lookup
+
+Graph Engine-->>Memory Orchestrator: Results
+
+Vector Store-->>Memory Orchestrator: Results
+
+AST Index-->>Memory Orchestrator: Results
+
+Memory Orchestrator->>Context Builder: Assemble
+
+Context Builder->>Governance Layer: Verify
+
+Governance Layer-->>Planner: Final Context
+```
+
+---
+
+# Retry Policy
+
+Retryable operations
+
+| Operation | Retry |
+|------------|------:|
+| Vector Store Timeout | Yes |
+| Graph Timeout | Yes |
+| Search Timeout | Yes |
+| Cache Miss | Yes |
+| Invalid Memory Object | No |
+| Governance Failure | No |
+| Authorization Failure | No |
+
+Retry Schedule
+
+```text
+1 s
+
+↓
+
+2 s
+
+↓
+
+4 s
+
+↓
+
+8 s
+
+↓
+
+Escalation
+```
+
+---
+
+# Circuit Breakers
+
+Repeated failures isolate unhealthy storage systems.
+
+```text
+Failure
+
+↓
+
+Retry
+
+↓
+
+Threshold
+
+↓
+
+Circuit Open
+
+↓
+
+Fallback Retrieval
+
+↓
+
+Recovery Probe
+
+↓
+
+Circuit Closed
+```
+
+Fallback strategies ensure retrieval continuity.
+
+---
+
+# Distributed Tracing
+
+Every retrieval receives
+
+- Trace ID
+- Query ID
+- Workflow ID
+- Memory Session ID
+
+Trace Flow
+
+```text
+Memory API
+
+↓
+
+Query Planner
+
+↓
+
+Memory Orchestrator
+
+↓
+
+Storage Engines
+
+↓
+
+Context Builder
+
+↓
+
+Governance Layer
+
+↓
+
+Client
+```
+
+Every retrieval stage contributes spans.
+
+---
+
+# Prometheus Metrics
+
+```text
+memory_requests_total
+
+memory_query_latency_seconds
+
+memory_query_planner_duration_seconds
+
+memory_context_size_bytes
+
+memory_objects_returned_total
+
+memory_graph_queries_total
+
+memory_vector_queries_total
+
+memory_governance_denied_total
+
+memory_cache_hit_ratio
+
+memory_provenance_verified_total
+```
+
+---
+
+# Structured Logging
+
+Example
+
+```json
+{
+  "traceId":"trace-4101",
+  "queryId":"QRY-991",
+  "workflowId":"WF-2026-001",
+  "retrievalStrategy":"Hybrid",
+  "objectsReturned":34,
+  "latencyMs":72,
+  "confidence":0.97
+}
+```
+
+Logs are immutable and searchable.
+
+---
+
+# Audit Records
+
+Every retrieval records
+
+- Query ID
+- Identity ID
+- Tenant
+- Memory Domains
+- Retrieved Objects
+- Governance Decisions
+- Context Budget
+- Timestamp
+- Trace ID
+
+Audit history is append-only.
+
+---
+
+# Reference Standards & Specifications
+
+The Memory Plane aligns with
+
+| Standard / Specification | Purpose |
+|--------------------------|---------|
+| Model Context Protocol (MCP) | Standardized tool integration |
+| OpenTelemetry | Distributed tracing |
+| OpenSearch API | Search abstraction |
+| GraphQL (optional) | Flexible retrieval APIs |
+| JSON Schema | Memory validation |
+| OpenAPI 3.1 | REST contract definition |
+| Apache Kafka | Event streaming |
+| Neo4j Property Graph Model | Graph relationships |
+
+---
+
+# Architecture Decision Records
+
+## ADR-023-06
+
+### Decision
+
+Introduce a dedicated Memory Query Planner.
+
+### Status
+
+Accepted
+
+### Reason
+
+Separating planning from retrieval improves efficiency, explainability, and scalability.
+
+---
+
+## ADR-023-07
+
+### Decision
+
+Always attach provenance metadata to retrieved context.
+
+### Status
+
+Accepted
+
+### Reason
+
+Provenance enables trust-aware reasoning and reduces hallucination risk.
+
+---
+
+## ADR-023-08
+
+### Decision
+
+Enforce governance before returning memory objects.
+
+### Status
+
+Accepted
+
+### Reason
+
+Compliance, privacy, and tenant isolation must be guaranteed before context reaches AI agents.
+
+---
+
+# Operational Readiness Scorecard
+
+| Capability | Status |
+|------------|--------|
+| Query Planning | ✅ Required |
+| Hybrid Retrieval | ✅ Required |
+| Governance Enforcement | ✅ Required |
+| Provenance Tracking | ✅ Required |
+| Multi-Tenant Isolation | ✅ Required |
+| Explainable Retrieval | ✅ Required |
+| Distributed Tracing | ✅ Required |
+| Standards Compliance | ✅ Required |
+
+---
+
+# Related Documents
+
+ADS-022-v5 — Identity & Trust Plane
+
+ADS-023-v1 — Architecture
+
+ADS-023-v2 — Memory Algorithms & Context Retrieval
+
+ADS-023-v4 — Runtime & Memory Infrastructure
+
+ADS-024-v1 — Execution Plane
+
+---
+
+# End of Document
