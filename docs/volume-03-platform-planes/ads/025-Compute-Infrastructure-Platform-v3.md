@@ -416,4 +416,470 @@ schemaVersion:
 
 ---
 
-# End of Part 1
+# Contract Validation
+
+Every infrastructure request follows a deterministic validation pipeline.
+
+```text
+Receive Request
+
+↓
+
+Schema Validation
+
+↓
+
+Authentication
+
+↓
+
+Authorization
+
+↓
+
+Placement Validation
+
+↓
+
+Capacity Validation
+
+↓
+
+Policy Evaluation
+
+↓
+
+Reservation
+
+↓
+
+Deployment
+```
+
+Infrastructure operations begin only after successful validation.
+
+---
+
+# Validation Rules
+
+Every request MUST satisfy
+
+| Rule | Description |
+|------|-------------|
+| API Version | Supported contract version |
+| Authentication | Valid workload identity |
+| Authorization | Infrastructure permissions |
+| Placement Decision | Valid version |
+| Infrastructure Profile | Approved profile |
+| Capacity | Sufficient available resources |
+| Policy | Organizational policy satisfied |
+| Integrity | Request integrity verified |
+
+Validation failures terminate the request.
+
+---
+
+# Authentication
+
+Infrastructure authentication is delegated to the Identity Plane.
+
+Supported methods
+
+- OAuth 2.1
+- OpenID Connect
+- SPIFFE / SPIRE
+- Mutual TLS
+- Service Accounts
+
+Infrastructure components never authenticate users directly.
+
+---
+
+# Authorization
+
+Authorization evaluates
+
+- Organization Policy
+- Tenant Policy
+- Infrastructure Profile
+- Resource Quotas
+- Cluster Access
+- Deployment Policy
+
+Decision
+
+```text
+Allow
+
+↓
+
+Reserve
+
+Deny
+
+↓
+
+Reject
+
+Escalate
+
+↓
+
+Operations Approval
+```
+
+Every authorization decision is audited.
+
+---
+
+# Placement Engine
+
+Every scheduling request enters the Placement Engine.
+
+Responsibilities
+
+- Infrastructure Profile Resolution
+- Cluster Ranking
+- Node Pool Selection
+- Capacity Validation
+- Affinity Evaluation
+- Risk Assessment
+- Cost Estimation
+
+Placement Decisions are immutable.
+
+---
+
+# Capacity Snapshot
+
+Every Placement Decision references a Capacity Snapshot.
+
+```yaml
+capacitySnapshot:
+
+  snapshotId:
+
+  cluster:
+
+  cpuAvailable:
+
+  memoryAvailable:
+
+  gpuAvailable:
+
+  activeReservations:
+
+  queueDepth:
+
+  nodeHealth:
+
+  utilization:
+
+  timestamp:
+```
+
+Capacity Snapshots remain immutable.
+
+---
+
+# Runtime Sequence
+
+```mermaid
+sequenceDiagram
+
+Execution Platform->>Infrastructure API: Resolve Placement
+
+Infrastructure API->>Placement Engine: Evaluate
+
+Placement Engine->>Capacity Manager: Capture Capacity Snapshot
+
+Capacity Manager-->>Placement Engine: Snapshot
+
+Placement Engine->>Reservation Manager: Reserve Resources
+
+Reservation Manager->>Kubernetes: Provision
+
+Kubernetes-->>Execution Platform: Ready
+```
+
+---
+
+# Retry Policy
+
+Retryable operations
+
+| Operation | Retry |
+|-----------|------:|
+| Node Provisioning Timeout | Yes |
+| Autoscaler Delay | Yes |
+| Temporary Capacity Shortage | Yes |
+| Network Timeout | Yes |
+| Invalid Placement Decision | No |
+| Quota Violation | No |
+| Authorization Failure | No |
+
+Retry schedule
+
+```text
+1 s
+
+↓
+
+2 s
+
+↓
+
+4 s
+
+↓
+
+8 s
+
+↓
+
+Escalation
+```
+
+Retries remain bounded.
+
+---
+
+# Circuit Breakers
+
+Infrastructure isolates unhealthy clusters.
+
+```text
+Cluster Failure
+
+↓
+
+Retry
+
+↓
+
+Failure Threshold
+
+↓
+
+Cluster Disabled
+
+↓
+
+Alternative Cluster
+
+↓
+
+Recovery Probe
+
+↓
+
+Cluster Enabled
+```
+
+Infrastructure failures remain localized.
+
+---
+
+# Distributed Tracing
+
+Every infrastructure operation includes
+
+- Trace ID
+- Placement Decision ID
+- Reservation ID
+- Cluster ID
+- Node Pool ID
+
+Trace Flow
+
+```text
+Infrastructure API
+
+↓
+
+Placement Engine
+
+↓
+
+Capacity Manager
+
+↓
+
+Reservation Manager
+
+↓
+
+Cluster Manager
+
+↓
+
+Kubernetes
+```
+
+Every infrastructure stage contributes trace spans.
+
+---
+
+# Prometheus Metrics
+
+```text
+placement_requests_total
+
+placement_duration_seconds
+
+reservation_requests_total
+
+capacity_snapshot_total
+
+cluster_provisioning_seconds
+
+node_pool_utilization
+
+quota_violations_total
+
+autoscaling_events_total
+
+cluster_failover_total
+
+reservation_expirations_total
+```
+
+---
+
+# Structured Logging
+
+Example
+
+```json
+{
+  "traceId":"trace-9101",
+  "placementDecision":"PLACE-001",
+  "reservationId":"RES-001",
+  "cluster":"cluster-east-01",
+  "nodePool":"gpu-a100",
+  "capacitySnapshot":"SNAP-2026-011",
+  "status":"Reserved"
+}
+```
+
+Logs are immutable and correlated.
+
+---
+
+# Audit Records
+
+Every infrastructure operation records
+
+- Placement Decision
+- Capacity Snapshot
+- Reservation
+- Cluster
+- Node Pool
+- Infrastructure Profile
+- Resource Allocation
+- Timestamp
+- Trace ID
+
+Audit history is append-only.
+
+---
+
+# Reference Standards & Specifications
+
+The Compute Platform aligns with
+
+| Standard | Purpose |
+|----------|---------|
+| Kubernetes API | Cluster orchestration |
+| Cluster API (CAPI) | Cluster lifecycle |
+| OpenTelemetry | Distributed tracing |
+| OpenAPI 3.1 | REST APIs |
+| gRPC | Internal communication |
+| OCI Runtime Specification | Container runtime |
+| CSI | Storage integration |
+| CNI | Networking integration |
+
+---
+
+# Architecture Decision Records
+
+## ADR-025-06
+
+### Decision
+
+Capture immutable Capacity Snapshots for every Placement Decision.
+
+### Status
+
+Accepted
+
+### Reason
+
+Immutable infrastructure state enables deterministic replay and scheduling analysis.
+
+---
+
+## ADR-025-07
+
+### Decision
+
+Require Infrastructure Reservations before deployment.
+
+### Status
+
+Accepted
+
+### Reason
+
+Reservations prevent contention and guarantee resource availability.
+
+---
+
+## ADR-025-08
+
+### Decision
+
+Treat Kubernetes as the execution engine rather than the scheduling authority.
+
+### Status
+
+Accepted
+
+### Reason
+
+The platform owns scheduling intent while Kubernetes performs infrastructure orchestration.
+
+---
+
+# Operational Readiness Scorecard
+
+| Capability | Status |
+|------------|--------|
+| Placement Engine | ✅ Required |
+| Capacity Snapshots | ✅ Required |
+| Infrastructure Reservations | ✅ Required |
+| Distributed Tracing | ✅ Required |
+| Immutable Audit Trail | ✅ Required |
+| Retry & Recovery | ✅ Required |
+| Standards Compliance | ✅ Required |
+| Deterministic Placement | ✅ Required |
+
+---
+
+# Related Documents
+
+ADS-024-v5 — Agent Execution Platform
+
+ADS-025-v1 — Compute & Infrastructure Platform
+
+ADS-025-v2 — Infrastructure Algorithms & Scheduling
+
+ADS-025-v4 — Runtime & Cluster Infrastructure
+
+ADS-026-v1 — Security Platform
+
+ADS-027-v1 — Observability Platform
+
+---
+
+# End of Document
