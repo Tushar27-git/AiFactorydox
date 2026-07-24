@@ -311,4 +311,389 @@ Clusters remain interchangeable.
 
 ---
 
-# End of Part 1
+# ALG-025-005
+
+## Cluster Selection
+
+The Cluster Manager evaluates every available cluster before scheduling.
+
+Evaluation criteria
+
+- Available Capacity
+- Region
+- Availability Zone
+- Latency
+- GPU Availability
+- Storage Availability
+- Maintenance Windows
+- Organization Policies
+
+Selection Pipeline
+
+```text
+Execution Plan
+
+↓
+
+Infrastructure Profile
+
+↓
+
+Eligible Clusters
+
+↓
+
+Health Evaluation
+
+↓
+
+Capacity Analysis
+
+↓
+
+Cluster Ranking
+
+↓
+
+Selected Cluster
+```
+
+Every selection is deterministic.
+
+---
+
+# Placement Decision
+
+Every scheduling operation produces a Placement Decision artifact.
+
+```yaml
+placementDecision:
+
+  id:
+
+  executionPlan:
+
+  infrastructureProfile:
+
+  selectedCluster:
+
+  selectedNodePool:
+
+  selectedZone:
+
+  selectedNode:
+
+  schedulingPolicy:
+
+  capacitySnapshot:
+
+  affinityEvaluation:
+
+  estimatedLatency:
+
+  estimatedCost:
+
+  riskAssessment:
+
+  timestamp:
+```
+
+Placement Decisions are immutable.
+
+---
+
+# ALG-025-006
+
+## Autoscaling
+
+Autoscaling continuously evaluates cluster demand.
+
+Scaling Inputs
+
+- Pending Workloads
+- CPU Utilization
+- Memory Utilization
+- GPU Utilization
+- Queue Depth
+- SLA Violations
+
+Scaling Flow
+
+```text
+Metrics
+
+↓
+
+Threshold Evaluation
+
+↓
+
+Scale Decision
+
+↓
+
+Provision Nodes
+
+↓
+
+Join Cluster
+
+↓
+
+Schedule Workloads
+```
+
+Scaling operations are policy controlled.
+
+---
+
+# ALG-025-007
+
+## Cluster Balancing
+
+The platform balances workloads across clusters.
+
+Balancing factors
+
+- CPU Utilization
+- Memory Utilization
+- GPU Utilization
+- Network Load
+- Storage Capacity
+- Failure Domains
+
+No cluster should become a bottleneck.
+
+---
+
+# ALG-025-008
+
+## Capacity Forecasting
+
+Capacity forecasting predicts future demand.
+
+Prediction inputs
+
+- Historical Usage
+- Execution Trends
+- Seasonal Patterns
+- Organization Growth
+- Reserved Capacity
+
+Forecasts support proactive scaling.
+
+---
+
+# Resource Quotas
+
+Quota scopes
+
+| Scope | Description |
+|--------|-------------|
+| Organization | Maximum infrastructure allocation |
+| Project | Project resource limits |
+| Workflow | Execution-specific limits |
+| Tenant | Multi-tenant isolation |
+| Agent | Per-agent execution limits |
+
+Quota violations reject scheduling.
+
+---
+
+# Placement Policies
+
+Supported policies
+
+| Policy | Purpose |
+|---------|---------|
+| Lowest Latency | Fastest execution |
+| Lowest Cost | Cost optimization |
+| Highest Availability | Mission critical workloads |
+| GPU Optimized | Accelerator workloads |
+| Data Locality | Minimize data movement |
+| Balanced | General purpose scheduling |
+
+Policies remain configurable.
+
+---
+
+# Multi-Region Scheduling
+
+Scheduling considers
+
+- Regional Capacity
+- Regional Health
+- Data Residency
+- Latency
+- Disaster Recovery
+- Compliance
+
+Cross-region placement follows governance rules.
+
+---
+
+# Infrastructure State Machine
+
+```mermaid
+stateDiagram-v2
+
+[*] --> Pending
+
+Pending --> Validating
+
+Validating --> Reserving
+
+Reserving --> Scheduling
+
+Scheduling --> Deploying
+
+Deploying --> Running
+
+Running --> Scaling
+
+Scaling --> Running
+
+Running --> Completed
+
+Running --> Failed
+
+Failed --> Recovering
+
+Recovering --> Scheduling
+
+Completed --> Released
+
+Released --> [*]
+```
+
+Every infrastructure allocation follows this lifecycle.
+
+---
+
+# Runtime Metrics
+
+```text
+cluster_utilization_percent
+
+node_allocations_total
+
+placement_decisions_total
+
+autoscaling_events_total
+
+gpu_allocations_total
+
+capacity_forecast_accuracy
+
+cluster_failovers_total
+
+resource_quota_violations_total
+
+scheduler_duration_seconds
+
+placement_latency_seconds
+```
+
+---
+
+# Structured Logging
+
+Example
+
+```json
+{
+  "placementDecision":"PLACE-001",
+  "executionPlan":"PLAN-001",
+  "cluster":"cluster-east-01",
+  "nodePool":"gpu-pool",
+  "node":"gpu-node-18",
+  "estimatedLatencyMs":27,
+  "estimatedCost":"$1.84",
+  "status":"Scheduled"
+}
+```
+
+Logs remain immutable.
+
+---
+
+# Architecture Decision Records
+
+## ADR-025-03
+
+### Decision
+
+Generate a Placement Decision for every scheduled workload.
+
+### Status
+
+Accepted
+
+### Reason
+
+Placement Decisions provide deterministic, replayable infrastructure scheduling.
+
+---
+
+## ADR-025-04
+
+### Decision
+
+Separate infrastructure scheduling from Kubernetes scheduling.
+
+### Status
+
+Accepted
+
+### Reason
+
+Platform scheduling determines intent, while Kubernetes performs orchestration.
+
+---
+
+## ADR-025-05
+
+### Decision
+
+Forecast infrastructure demand continuously.
+
+### Status
+
+Accepted
+
+### Reason
+
+Predictive scaling improves availability and reduces provisioning latency.
+
+---
+
+# Operational Readiness Scorecard
+
+| Capability | Status |
+|------------|--------|
+| Placement Decisions | ✅ Required |
+| Cluster Balancing | ✅ Required |
+| Predictive Scaling | ✅ Required |
+| GPU Scheduling | ✅ Required |
+| Multi-Region Scheduling | ✅ Required |
+| Capacity Forecasting | ✅ Required |
+| Resource Quotas | ✅ Required |
+| Deterministic Placement | ✅ Required |
+
+---
+
+# Related Documents
+
+ADS-024-v5 — Agent Execution Platform
+
+ADS-025-v1 — Compute & Infrastructure Platform
+
+ADS-025-v3 — APIs, Events & Contracts
+
+ADS-026-v1 — Security Platform
+
+ADS-027-v1 — Observability Platform
+
+---
+
+# End of Document
