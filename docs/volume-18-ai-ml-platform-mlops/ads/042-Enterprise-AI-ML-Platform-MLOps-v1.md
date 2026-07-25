@@ -237,4 +237,446 @@ The Model Definition is immutable after publication.
 
 ---
 
-# End of Part 1
+# Model Record
+
+Every registered model creates a Model Record.
+
+```yaml
+modelRecord:
+
+  modelRecordId:
+
+  model:
+
+  experiment:
+
+  registryVersion:
+
+  deploymentStatus:
+
+  validationStatus:
+
+  approvalStatus:
+
+  createdAt:
+
+  updatedAt:
+```
+
+Model Records maintain immutable publication metadata.
+
+---
+
+# Feature Record
+
+Every governed feature generates a Feature Record.
+
+```yaml
+featureRecord:
+
+  featureRecordId:
+
+  featureName:
+
+  featureVersion:
+
+  sourceDataset:
+
+  transformationLogic:
+
+  featureOwner:
+
+  featureStatus:
+
+  createdAt:
+```
+
+Feature Records preserve feature lineage and reuse.
+
+---
+
+# Experiment Record
+
+Every training execution generates an Experiment Record.
+
+```yaml
+experimentRecord:
+
+  experimentRecordId:
+
+  modelRecord:
+
+  trainingDataset:
+
+  hyperparameters:
+
+  metrics:
+
+  executionEnvironment:
+
+  experimentStatus:
+
+  completedAt:
+```
+
+Experiment Records ensure reproducibility.
+
+---
+
+# Validation Record
+
+Every validation process creates a Validation Record.
+
+```yaml
+validationRecord:
+
+  validationRecordId:
+
+  modelRecord:
+
+  validationDataset:
+
+  evaluationMetrics:
+
+  fairnessAssessment:
+
+  robustnessAssessment:
+
+  validationStatus:
+
+  evaluatedAt:
+```
+
+Validation Records remain append-only.
+
+---
+
+# Deployment Session
+
+Every deployment creates a Deployment Session.
+
+```yaml
+deploymentSession:
+
+  deploymentSessionId:
+
+  modelRecord:
+
+  deploymentStrategy:
+
+  targetEnvironment:
+
+  deploymentState:
+
+  rolloutPercentage:
+
+  startedAt:
+
+  completedAt:
+```
+
+Deployment Sessions represent active runtime deployment.
+
+---
+
+# Model Health Record
+
+Operational model health is continuously evaluated.
+
+```yaml
+modelHealthRecord:
+
+  modelHealthRecordId:
+
+  deploymentSession:
+
+  inferenceHealth:
+
+  latencyHealth:
+
+  driftHealth:
+
+  accuracyHealth:
+
+  resourceHealth:
+
+  evaluatedAt:
+```
+
+Health remains independent from deployment history.
+
+---
+
+# Model Runtime Snapshot
+
+The platform periodically generates runtime snapshots.
+
+```yaml
+modelRuntimeSnapshot:
+
+  snapshotId:
+
+  generatedAt:
+
+  activeDeployments:
+
+  activeInferenceEndpoints:
+
+  activeExperiments:
+
+  platformHealth:
+
+  throughput:
+```
+
+Snapshots support replay and disaster recovery.
+
+---
+
+# Model Ledger Entry
+
+Every completed lifecycle generates an immutable ledger entry.
+
+```yaml
+modelLedgerEntry:
+
+  entryId:
+
+  model:
+
+  modelRecord:
+
+  featureRecord:
+
+  experimentRecord:
+
+  validationRecord:
+
+  deploymentSession:
+
+  modelHealthRecord:
+
+  modelRuntimeSnapshot:
+
+  traceId:
+
+  timestamp:
+
+  digitalSignature:
+```
+
+Ledger Entries provide authoritative audit history.
+
+---
+
+# Platform Architecture
+
+```mermaid
+flowchart TB
+
+Model
+
+-->
+
+ModelRecord
+
+ModelRecord
+
+-->
+
+FeatureRecord
+
+FeatureRecord
+
+-->
+
+ExperimentRecord
+
+ExperimentRecord
+
+-->
+
+ValidationRecord
+
+ValidationRecord
+
+-->
+
+DeploymentSession
+
+DeploymentSession
+
+-->
+
+ModelHealthRecord
+
+ModelHealthRecord
+
+-->
+
+ModelRuntimeSnapshot
+
+ModelRuntimeSnapshot
+
+-->
+
+ModelLedgerEntry
+```
+
+Every artifact extends the operational lifecycle without modifying prior artifacts.
+
+---
+
+# Model Lifecycle Overview
+
+```text
+Model Definition
+
+↓
+
+Feature Engineering
+
+↓
+
+Model Training
+
+↓
+
+Validation
+
+↓
+
+Deployment
+
+↓
+
+Inference
+
+↓
+
+Health Evaluation
+
+↓
+
+Runtime Snapshot
+
+↓
+
+Ledger Persistence
+
+↓
+
+Archive
+```
+
+The lifecycle remains deterministic and reproducible.
+
+---
+
+# Platform Guarantees
+
+The AI/ML Platform guarantees
+
+- Immutable Model Definitions
+- Reproducible Training
+- Feature Reuse
+- Continuous Model Validation
+- Responsible AI Governance
+- Replayable Inference History
+- Continuous Health Monitoring
+- Immutable Operational History
+
+---
+
+# Architecture Decision Records
+
+## ADR-042-01
+
+### Decision
+
+Represent every governed model using immutable operational artifacts.
+
+### Status
+
+Accepted
+
+### Reason
+
+Artifact-centric model management improves governance, reproducibility, compliance, and observability.
+
+---
+
+## ADR-042-02
+
+### Decision
+
+Separate model definitions from runtime deployment state.
+
+### Status
+
+Accepted
+
+### Reason
+
+Enables independent versioning, scalable deployment, rollback, and deterministic replay.
+
+---
+
+## ADR-042-03
+
+### Decision
+
+Model feature engineering as independent Feature Records.
+
+### Status
+
+Accepted
+
+### Reason
+
+Supports feature reuse, lineage, governance, and reproducible training.
+
+---
+
+# Operational Readiness Scorecard
+
+| Capability | Status |
+|------------|--------|
+| Model Definitions | ✅ Required |
+| Feature Store | ✅ Required |
+| Experiment Tracking | ✅ Required |
+| Model Validation | ✅ Required |
+| Model Deployment | ✅ Required |
+| Runtime Snapshots | ✅ Required |
+| Immutable Ledger | ✅ Required |
+| Deterministic Replay | ✅ Required |
+
+---
+
+# Related Documents
+
+ADS-021-v5 — Workflow Kernel
+
+ADS-022-v5 — Identity & Trust Plane
+
+ADS-025-v5 — Compute & Infrastructure Platform
+
+ADS-026-v5 — Security Platform
+
+ADS-027-v5 — Observability Platform
+
+ADS-030-v5 — Integration & Ecosystem Platform
+
+ADS-038-v5 — Enterprise Event Streaming, Messaging & Real-Time Data Platform
+
+ADS-039-v5 — Enterprise API Gateway, Service Mesh & Traffic Management Platform
+
+ADS-040-v5 — Enterprise Workflow Orchestration & Business Process Automation Platform
+
+ADS-041-v5 — Enterprise Data Platform & Lakehouse Architecture
+
+ADS-042-v2 — ML Algorithms & Lifecycle
+
+---
+
+# End of Document
