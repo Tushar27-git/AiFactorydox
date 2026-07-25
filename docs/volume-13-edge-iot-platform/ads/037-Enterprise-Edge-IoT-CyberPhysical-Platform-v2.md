@@ -218,4 +218,326 @@ Device Records remain append-only.
 
 ---
 
-# End of Part 1
+# ALG-037-006
+
+## Edge AI Deployment
+
+The Edge AI Platform deploys AI workloads using governed rollout policies.
+
+Deployment stages
+
+- Package Validation
+- Compatibility Verification
+- Resource Assessment
+- Model Installation
+- Warm-Up
+- Health Verification
+- Activation
+
+Only verified models become active.
+
+---
+
+# ALG-037-007
+
+## Remote Command Execution
+
+The Command Dispatcher executes
+
+- Configuration Updates
+- Firmware Installation
+- Runtime Restart
+- Diagnostics
+- Log Collection
+- Emergency Shutdown
+
+Every command is authenticated, authorized, and audited.
+
+---
+
+# ALG-037-008
+
+## Offline Synchronization
+
+Devices operating without network connectivity SHALL continue autonomous execution.
+
+Offline capabilities include
+
+- Local Decision Making
+- Event Buffering
+- Telemetry Caching
+- Policy Enforcement
+- AI Inference
+
+Synchronization resumes automatically when connectivity is restored.
+
+---
+
+# Fleet Record
+
+Every managed fleet generates a Fleet Record.
+
+```yaml
+fleetRecord:
+
+  fleetRecordId:
+
+  fleet:
+
+  memberDevices:
+
+  deploymentPolicy:
+
+  firmwareBaseline:
+
+  securityBaseline:
+
+  operationalStatus:
+
+  healthScore:
+
+  lastEvaluatedAt:
+```
+
+Fleet Records remain immutable.
+
+---
+
+# Device Lifecycle Stages
+
+| Stage | Purpose |
+|--------|----------|
+| Registered | Device identity established |
+| Provisioned | Credentials and policies assigned |
+| Active | Device operational |
+| Updating | Firmware or software deployment |
+| Maintenance | Restricted operation |
+| Suspended | Temporarily disabled |
+| Retired | Permanently removed |
+
+Lifecycle transitions are policy-controlled.
+
+---
+
+# Fleet Lifecycle
+
+Supported stages
+
+| Stage | Purpose |
+|--------|----------|
+| Created | Fleet initialized |
+| Populated | Devices assigned |
+| Operational | Production use |
+| Updating | Controlled rollout |
+| Validated | Health verified |
+| Archived | Historical retention |
+
+Fleet history remains reproducible.
+
+---
+
+# Device State Machine
+
+```mermaid
+stateDiagram-v2
+
+[*] --> Registered
+
+Registered --> Provisioned
+
+Provisioned --> Active
+
+Active --> Updating
+
+Updating --> Active
+
+Active --> Maintenance
+
+Maintenance --> Active
+
+Active --> Suspended
+
+Suspended --> Active
+
+Active --> Retired
+
+Retired --> [*]
+```
+
+Every managed device follows this lifecycle.
+
+---
+
+# Fleet Management Pipeline
+
+```text
+Register Device
+
+↓
+
+Provision Device
+
+↓
+
+Assign Fleet
+
+↓
+
+Deploy Policies
+
+↓
+
+Collect Telemetry
+
+↓
+
+Deploy AI Models
+
+↓
+
+Execute Commands
+
+↓
+
+Monitor Health
+
+↓
+
+Archive Lifecycle
+```
+
+---
+
+# Edge Metrics
+
+```text
+registered_devices_total
+
+active_devices_total
+
+fleet_records_total
+
+firmware_updates_total
+
+edge_ai_deployments_total
+
+telemetry_events_total
+
+offline_devices_total
+
+command_executions_total
+
+device_health_score
+
+fleet_health_score
+```
+
+---
+
+# Structured Logging
+
+Example
+
+```json
+{
+  "deviceId":"DEV-481",
+  "deviceRecord":"DR-102",
+  "fleetRecord":"FR-019",
+  "firmwareVersion":"3.2.7",
+  "edgeRuntime":"Running",
+  "timestamp":"2027-04-16T09:22:14Z"
+}
+```
+
+Logs remain immutable and correlated.
+
+---
+
+# Architecture Decision Records
+
+## ADR-037-03
+
+### Decision
+
+Represent every managed fleet as a Fleet Record.
+
+### Status
+
+Accepted
+
+### Reason
+
+Fleet Records provide operational governance, deployment consistency, compliance tracking, and large-scale fleet management.
+
+---
+
+## ADR-037-04
+
+### Decision
+
+Support autonomous offline execution.
+
+### Status
+
+Accepted
+
+### Reason
+
+Edge devices must continue safe operation despite intermittent or unavailable connectivity.
+
+---
+
+## ADR-037-05
+
+### Decision
+
+Separate logical device identity from operational state.
+
+### Status
+
+Accepted
+
+### Reason
+
+Decoupling identity from runtime state improves lifecycle management, auditability, resilience, and operational scalability.
+
+---
+
+# Operational Readiness Scorecard
+
+| Capability | Status |
+|------------|--------|
+| Device Registry | ✅ Required |
+| Device Records | ✅ Required |
+| Fleet Records | ✅ Required |
+| Edge AI Deployment | ✅ Required |
+| Telemetry Collection | ✅ Required |
+| Offline Operation | ✅ Required |
+| Remote Commands | ✅ Required |
+| Firmware Lifecycle | ✅ Required |
+
+---
+
+# Related Documents
+
+ADS-021-v5 — Workflow Kernel
+
+ADS-022-v5 — Identity & Trust Plane
+
+ADS-025-v5 — Compute & Infrastructure Platform
+
+ADS-026-v5 — Security Platform
+
+ADS-027-v5 — Observability Platform
+
+ADS-030-v5 — Integration & Ecosystem Platform
+
+ADS-036-v5 — Enterprise Digital Twin & Simulation Platform
+
+ADS-037-v1 — Enterprise Edge, IoT & Cyber-Physical Systems Platform
+
+ADS-037-v3 — APIs, Events & Contracts
+
+---
+
+# End of Document
