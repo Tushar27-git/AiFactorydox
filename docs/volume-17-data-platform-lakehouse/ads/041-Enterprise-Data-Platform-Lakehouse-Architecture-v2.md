@@ -214,4 +214,336 @@ Dataset Records remain append-only.
 
 ---
 
-# End of Part 1
+# ALG-041-006
+
+## Dataset Publication
+
+A dataset becomes available for consumption only after
+
+- Successful ingestion
+- Completed transformations
+- Quality gate approval
+- Metadata registration
+- Lineage recording
+- Governance validation
+
+Successful publication updates the Dataset Record.
+
+---
+
+# ALG-041-007
+
+## Data Retention
+
+Retention policies evaluate
+
+- Dataset Classification
+- Regulatory Requirements
+- Business Policies
+- Retention Duration
+- Archival Strategy
+- Deletion Authorization
+
+Retention remains policy-driven.
+
+---
+
+# ALG-041-008
+
+## Dataset Archival
+
+Completed datasets transition to archival.
+
+Archival records
+
+- Dataset Definition
+- Dataset Record
+- Transformation Records
+- Quality Records
+- Lineage Records
+- Data Session
+- Runtime Snapshot
+- Ledger Entry
+
+Archived datasets remain replayable.
+
+---
+
+# Transformation Record
+
+Every transformation generates a Transformation Record.
+
+```yaml
+transformationRecord:
+
+  transformationRecordId:
+
+  datasetRecord:
+
+  transformationName:
+
+  transformationType:
+
+  executionEngine:
+
+  inputDatasets:
+
+  outputDataset:
+
+  executionStatus:
+
+  startedAt:
+
+  completedAt:
+```
+
+Transformation Records remain immutable after completion.
+
+---
+
+# Data Lifecycle
+
+```mermaid
+stateDiagram-v2
+
+[*] --> Registered
+
+Registered --> Ingesting
+
+Ingesting --> Transforming
+
+Transforming --> Validating
+
+Validating --> Published
+
+Published --> Archived
+
+Archived --> [*]
+```
+
+Every dataset progresses through deterministic lifecycle states.
+
+---
+
+# Transformation Pipeline
+
+```text
+Dataset Registered
+
+↓
+
+Data Ingestion
+
+↓
+
+Transformation
+
+↓
+
+Quality Validation
+
+↓
+
+Lineage Recording
+
+↓
+
+Dataset Publication
+
+↓
+
+Archival
+```
+
+Every processing stage remains reproducible.
+
+---
+
+# Quality Validation Pipeline
+
+```text
+Dataset Received
+
+↓
+
+Schema Validation
+
+↓
+
+Completeness Check
+
+↓
+
+Accuracy Check
+
+↓
+
+Consistency Check
+
+↓
+
+Freshness Check
+
+↓
+
+Quality Decision
+```
+
+Only validated datasets proceed to publication.
+
+---
+
+# Failure Handling
+
+Failures are classified as
+
+| Failure | Recovery Strategy |
+|----------|-------------------|
+| Ingestion Failure | Retry Import |
+| Transformation Failure | Retry Execution |
+| Quality Failure | Reject Publication |
+| Lineage Failure | Regenerate Lineage |
+| Storage Failure | Failover Storage |
+| Metadata Failure | Retry Registration |
+
+Recovery policies remain governance-controlled.
+
+---
+
+# Prometheus Metrics
+
+```text
+dataset_registrations_total
+
+data_ingestions_total
+
+transformation_executions_total
+
+quality_validations_total
+
+quality_failures_total
+
+lineage_records_total
+
+published_datasets_total
+
+archived_datasets_total
+
+data_processing_duration_seconds
+
+dataset_replay_total
+```
+
+---
+
+# Structured Logging
+
+Example
+
+```json
+{
+  "datasetRecord":"DR-4108",
+  "transformationRecord":"TF-2091",
+  "qualityRecord":"QR-1147",
+  "lineageRecord":"LR-0812",
+  "processingState":"Published",
+  "traceId":"TRC-410221"
+}
+```
+
+Logs remain immutable and fully correlated.
+
+---
+
+# Architecture Decision Records
+
+## ADR-041-04
+
+### Decision
+
+Require successful quality validation before dataset publication.
+
+### Status
+
+Accepted
+
+### Reason
+
+Ensures downstream consumers receive governed, trusted data.
+
+---
+
+## ADR-041-05
+
+### Decision
+
+Represent every transformation as an independent Transformation Record.
+
+### Status
+
+Accepted
+
+### Reason
+
+Supports lineage, replay, optimization, and operational observability.
+
+---
+
+## ADR-041-06
+
+### Decision
+
+Persist immutable dataset history for replay.
+
+### Status
+
+Accepted
+
+### Reason
+
+Supports auditing, diagnostics, regulatory compliance, and deterministic data replay.
+
+---
+
+# Operational Readiness Scorecard
+
+| Capability | Status |
+|------------|--------|
+| Dataset Registration | ✅ Required |
+| Data Ingestion | ✅ Required |
+| Transformations | ✅ Required |
+| Quality Validation | ✅ Required |
+| Lineage Generation | ✅ Required |
+| Data Retention | ✅ Required |
+| Immutable History | ✅ Required |
+| Replay Support | ✅ Required |
+
+---
+
+# Related Documents
+
+ADS-021-v5 — Workflow Kernel
+
+ADS-022-v5 — Identity & Trust Plane
+
+ADS-025-v5 — Compute & Infrastructure Platform
+
+ADS-026-v5 — Security Platform
+
+ADS-027-v5 — Observability Platform
+
+ADS-030-v5 — Integration & Ecosystem Platform
+
+ADS-038-v5 — Enterprise Event Streaming, Messaging & Real-Time Data Platform
+
+ADS-039-v5 — Enterprise API Gateway, Service Mesh & Traffic Management Platform
+
+ADS-040-v5 — Enterprise Workflow Orchestration & Business Process Automation Platform
+
+ADS-041-v1 — Architecture
+
+ADS-041-v3 — APIs, Schemas & Contracts
+
+---
+
+# End of Document
