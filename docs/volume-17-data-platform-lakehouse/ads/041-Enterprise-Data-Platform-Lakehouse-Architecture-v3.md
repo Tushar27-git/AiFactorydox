@@ -346,4 +346,366 @@ Every data operation produces immutable operational evidence.
 
 ---
 
-# End of Part 1
+# Request Validation Pipeline
+
+Every data platform request SHALL pass through a deterministic validation pipeline.
+
+```text
+Receive Request
+
+↓
+
+Authenticate Identity
+
+↓
+
+Authorize Data Operation
+
+↓
+
+Validate Dataset Contract
+
+↓
+
+Validate Input
+
+↓
+
+Apply Governance Policies
+
+↓
+
+Execute Data Operation
+
+↓
+
+Persist Dataset Record
+
+↓
+
+Return Response
+```
+
+No data operation bypasses validation.
+
+---
+
+# Authentication
+
+Supported authentication mechanisms
+
+- OAuth 2.1
+- OpenID Connect (OIDC)
+- Mutual TLS (mTLS)
+- JWT Bearer Tokens
+- API Keys (Policy Controlled)
+- SPIFFE / SPIRE Workload Identity
+
+Every user, service, and processing engine has a verifiable identity.
+
+---
+
+# Authorization
+
+Authorization evaluates
+
+- User Identity
+- Service Identity
+- Tenant
+- Dataset Permissions
+- Transformation Permissions
+- Data Classification
+- Governance Policies
+
+Decision flow
+
+```text
+Request
+
+↓
+
+Identity Verification
+
+↓
+
+Policy Engine
+
+↓
+
+Permit / Deny
+
+↓
+
+Audit Record
+```
+
+Authorization remains centrally governed.
+
+---
+
+# Data Session
+
+Every ingestion or transformation execution creates an immutable Data Session.
+
+```yaml
+dataSession:
+
+  dataSessionId:
+
+  datasetRecord:
+
+  transformationRecord:
+
+  executionContext:
+
+  processingWindow:
+
+  executionState:
+
+  storageTargets:
+
+  startedAt:
+
+  endedAt:
+```
+
+Data Sessions remain independently traceable.
+
+---
+
+# Dataset Contracts
+
+Every dataset contract defines
+
+- Schema Version
+- Storage Layer
+- Classification
+- Ownership
+- Retention Policy
+- Publication Rules
+- Deprecation Timeline
+
+Contracts are version-controlled.
+
+---
+
+# Transformation Contracts
+
+Every transformation defines
+
+- Transformation Type
+- Execution Engine
+- Input Schema
+- Output Schema
+- Validation Rules
+- Failure Policy
+- Success Criteria
+
+Transformation contracts remain immutable until superseded.
+
+---
+
+# Governance Policies
+
+Every governed dataset defines
+
+- Data Classification
+- Access Policy
+- Encryption Requirements
+- Retention Policy
+- Quality Thresholds
+- Publication Rules
+- Lineage Requirements
+
+Policies remain version-controlled.
+
+---
+
+# Distributed Tracing
+
+Trace propagation
+
+```text
+Data Source
+
+↓
+
+Ingestion Platform
+
+↓
+
+Transformation Engine
+
+↓
+
+Quality Engine
+
+↓
+
+Metadata Catalog
+
+↓
+
+Data Ledger
+```
+
+Every component contributes OpenTelemetry spans using the shared Trace ID.
+
+---
+
+# Prometheus Metrics
+
+```text
+dataset_registrations_total
+
+ingestion_requests_total
+
+transformation_requests_total
+
+quality_validations_total
+
+published_datasets_total
+
+active_data_sessions_total
+
+lineage_generation_duration_seconds
+
+dataset_processing_duration_seconds
+
+quality_gate_failures_total
+
+data_platform_success_rate
+```
+
+Metrics provide continuous operational visibility.
+
+---
+
+# Structured Logging
+
+Example
+
+```json
+{
+  "datasetRecord":"DR-4108",
+  "dataSession":"DSN-1029",
+  "transformationRecord":"TF-2091",
+  "qualityRecord":"QR-1147",
+  "processingState":"Published",
+  "traceId":"TRC-410221"
+}
+```
+
+Logs remain immutable and fully correlated.
+
+---
+
+# Standard Error Model
+
+```json
+{
+  "code":"DATASET_QUALITY_VALIDATION_FAILED",
+  "message":"Dataset failed mandatory quality certification.",
+  "traceId":"TRC-410221",
+  "timestamp":"2027-08-02T09:52:14Z"
+}
+```
+
+Every error is auditable.
+
+---
+
+# Architecture Decision Records
+
+## ADR-041-07
+
+### Decision
+
+Require dataset contract validation before ingestion.
+
+### Status
+
+Accepted
+
+### Reason
+
+Prevents invalid datasets from entering the governed platform.
+
+---
+
+## ADR-041-08
+
+### Decision
+
+Represent runtime execution through immutable Data Sessions.
+
+### Status
+
+Accepted
+
+### Reason
+
+Improves replayability, observability, diagnostics, and governance.
+
+---
+
+## ADR-041-09
+
+### Decision
+
+Version dataset and transformation contracts independently.
+
+### Status
+
+Accepted
+
+### Reason
+
+Supports controlled evolution while preserving backward compatibility.
+
+---
+
+# Operational Readiness Scorecard
+
+| Capability | Status |
+|------------|--------|
+| REST APIs | ✅ Required |
+| gRPC Services | ✅ Required |
+| Dataset Contracts | ✅ Required |
+| Transformation Contracts | ✅ Required |
+| Data Governance | ✅ Required |
+| OpenTelemetry | ✅ Required |
+| Prometheus Metrics | ✅ Required |
+| Immutable Contracts | ✅ Required |
+
+---
+
+# Related Documents
+
+ADS-021-v5 — Workflow Kernel
+
+ADS-022-v5 — Identity & Trust Plane
+
+ADS-025-v5 — Compute & Infrastructure Platform
+
+ADS-026-v5 — Security Platform
+
+ADS-027-v5 — Observability Platform
+
+ADS-030-v5 — Integration & Ecosystem Platform
+
+ADS-038-v5 — Enterprise Event Streaming, Messaging & Real-Time Data Platform
+
+ADS-039-v5 — Enterprise API Gateway, Service Mesh & Traffic Management Platform
+
+ADS-040-v5 — Enterprise Workflow Orchestration & Business Process Automation Platform
+
+ADS-041-v1 — Architecture
+
+ADS-041-v2 — Data Algorithms & Lifecycle
+
+ADS-041-v4 — Runtime & Data Infrastructure
+
+---
+
+# End of Document
