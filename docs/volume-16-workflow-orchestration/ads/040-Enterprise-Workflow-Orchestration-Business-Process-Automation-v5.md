@@ -262,4 +262,329 @@ Workflow Sessions coordinate runtime execution.
 
 ---
 
-# End of Part 1
+# Stage 6
+
+## Runtime Health Evaluation
+
+The Health Runtime continuously evaluates workflow execution.
+
+Evaluation includes
+
+- Workflow Runtime Health
+- Task Runtime Health
+- Worker Health
+- Approval Health
+- Timer Health
+- Compensation Health
+- SLA Compliance
+
+Artifact Produced
+
+Workflow Health Record
+
+```yaml
+workflowHealthRecord:
+
+  workflowHealthRecordId: WHR-0127
+
+  workflowSession: WS-551
+
+  executionHealth: Healthy
+
+  schedulerHealth: Healthy
+
+  workerHealth: Healthy
+
+  approvalHealth: Healthy
+
+  latencyHealth: Normal
+```
+
+Health Records provide continuous operational visibility.
+
+---
+
+# Stage 7
+
+## Runtime Snapshot Generation
+
+The Workflow Runtime periodically captures platform state.
+
+Artifact Produced
+
+Workflow Runtime Snapshot
+
+```yaml
+workflowRuntimeSnapshot:
+
+  snapshotId: SNAP-0342
+
+  activeWorkflows: 18425
+
+  activeTasks: 74218
+
+  pendingApprovals: 2184
+
+  activeTimers: 911
+
+  platformHealth: Healthy
+
+  throughput: 12850 workflows/min
+```
+
+Snapshots support diagnostics, replay, and disaster recovery.
+
+---
+
+# Stage 8
+
+## Workflow Completion
+
+Workflow Runtime verifies
+
+- Required tasks completed
+- Approvals finalized
+- Timers satisfied
+- Compensation not required
+- Output validated
+
+Workflow transitions to **Completed**.
+
+---
+
+# Stage 9
+
+## Immutable Ledger Persistence
+
+The completed lifecycle is permanently recorded.
+
+Artifact Produced
+
+Workflow Ledger Entry
+
+```yaml
+workflowLedgerEntry:
+
+  entryId: WL-81024
+
+  workflow: WF-10021
+
+  workflowRecord: WR-10241
+
+  taskRecord: TR-8042
+
+  approvalRecord: AR-0183
+
+  workflowSession: WS-551
+
+  workflowHealthRecord: WHR-0127
+
+  workflowRuntimeSnapshot: SNAP-0342
+
+  traceId: TRC-902114
+
+  digitalSignature: SHA256
+```
+
+The Workflow Ledger forms the authoritative operational audit trail.
+
+---
+
+# Stage 10
+
+## Executive Governance Review
+
+Operations leadership evaluates
+
+- Workflow Throughput
+- Completion Rate
+- Approval SLA Compliance
+- Compensation Frequency
+- Retry Success
+- Runtime Availability
+- Policy Compliance
+- Operational Risk
+
+Executive dashboards consume immutable lifecycle artifacts for reproducible reporting.
+
+---
+
+# Stage 11
+
+## Archive & Replay
+
+Archived artifacts
+
+- Workflow
+- Workflow Record
+- Task Record
+- Approval Record
+- Workflow Session
+- Workflow Health Record
+- Workflow Runtime Snapshot
+- Workflow Ledger Entry
+
+Replay capabilities include
+
+- Workflow Replay
+- Task Replay
+- Approval Audit
+- Compensation Verification
+- Incident Investigation
+- Compliance Reporting
+
+Archived data remains immutable.
+
+---
+
+# Complete Artifact Lifecycle
+
+```text
+Workflow
+
+↓
+
+Workflow Record
+
+↓
+
+Task Record
+
+↓
+
+Approval Record
+
+↓
+
+Workflow Session
+
+↓
+
+Workflow Health Record
+
+↓
+
+Workflow Runtime Snapshot
+
+↓
+
+Workflow Ledger Entry
+
+↓
+
+Archive
+```
+
+Every artifact extends operational history without modifying previous artifacts.
+
+---
+
+# Reference Metrics
+
+| Metric | Value |
+|---------|------:|
+| Workflow Executions / Day | 8.4 Million |
+| Active Workflow Sessions | 18,425 |
+| Average Workflow Duration | 2.8 min |
+| Approval SLA Compliance | 99.8% |
+| Retry Success Rate | 99.2% |
+| Compensation Rate | 0.18% |
+| Runtime Availability | 99.995% |
+| Replay Success Rate | 100% |
+
+---
+
+# Lessons Learned
+
+The platform demonstrates that
+
+- Workflow definitions remain immutable.
+- Workflow execution is deterministic and durable.
+- Tasks are independently observable.
+- Human approvals are governed and auditable.
+- Runtime health is continuously evaluated.
+- Runtime snapshots enable replay and disaster recovery.
+- Ledger entries provide end-to-end auditability.
+
+---
+
+# Architecture Decision Records
+
+## ADR-040-13
+
+### Decision
+
+Represent the complete workflow lifecycle using immutable operational artifacts.
+
+### Status
+
+Accepted
+
+### Reason
+
+Provides deterministic execution, governance, replayability, regulatory compliance, and operational resilience.
+
+---
+
+# Technology Decision Records
+
+## TDR-040-06
+
+### Technology
+
+Workflow Ledger
+
+### Decision
+
+Persist all workflow lifecycle artifacts in an append-only ledger.
+
+### Reason
+
+Supports auditing, compliance, replay, incident response, and historical analytics.
+
+---
+
+# Operational Readiness Scorecard
+
+| Capability | Status |
+|------------|--------|
+| End-to-End Workflow Traceability | ✅ Complete |
+| Immutable Audit Trail | ✅ Complete |
+| Human Approval Governance | ✅ Complete |
+| Deterministic Execution | ✅ Complete |
+| Runtime Health Monitoring | ✅ Complete |
+| Runtime Snapshotting | ✅ Complete |
+| Replay & Recovery | ✅ Complete |
+| Executive Governance | ✅ Complete |
+
+---
+
+# Related Documents
+
+ADS-021-v5 — Workflow Kernel
+
+ADS-022-v5 — Identity & Trust Plane
+
+ADS-025-v5 — Compute & Infrastructure Platform
+
+ADS-026-v5 — Security Platform
+
+ADS-027-v5 — Observability Platform
+
+ADS-030-v5 — Integration & Ecosystem Platform
+
+ADS-038-v5 — Enterprise Event Streaming, Messaging & Real-Time Data Platform
+
+ADS-039-v5 — Enterprise API Gateway, Service Mesh & Traffic Management Platform
+
+ADS-040-v1 — Architecture
+
+ADS-040-v2 — Workflow Algorithms & Lifecycle
+
+ADS-040-v3 — APIs, Events & Contracts
+
+ADS-040-v4 — Runtime & Workflow Infrastructure
+
+---
+
+# End of Document
