@@ -448,4 +448,409 @@ schemaVersion:
 
 ---
 
-# End of Part 1
+# Request Validation
+
+Every knowledge lifecycle request follows a deterministic validation pipeline.
+
+```text
+Receive Request
+
+↓
+
+Schema Validation
+
+↓
+
+Authentication
+
+↓
+
+Authorization
+
+↓
+
+Knowledge Validation
+
+↓
+
+Governance Validation
+
+↓
+
+Quality Validation
+
+↓
+
+Execution
+```
+
+Execution begins only after successful validation.
+
+---
+
+# Validation Rules
+
+Every request MUST satisfy
+
+| Rule | Description |
+|------|-------------|
+| API Version | Supported lifecycle contract |
+| Authentication | Valid identity |
+| Authorization | Approved operation |
+| Knowledge Version | Registered asset |
+| Metadata | Valid metadata profile |
+| Governance | Approved lifecycle stage |
+| Quality | Data quality thresholds satisfied |
+| Tenant | Tenant isolation enforced |
+
+Validation failures reject the request.
+
+---
+
+# Authentication
+
+Knowledge authentication supports
+
+- OAuth 2.1
+- Mutual TLS
+- API Keys
+- JWT
+- OpenID Connect
+- SPIFFE / SPIRE
+
+Anonymous knowledge operations are prohibited.
+
+---
+
+# Authorization
+
+Authorization evaluates
+
+- User Identity
+- Organization
+- Knowledge Ownership
+- Access Policies
+- Classification Level
+- Governance Rules
+
+Decision
+
+```text
+Allow
+
+↓
+
+Execute
+
+Deny
+
+↓
+
+Reject
+
+Review
+
+↓
+
+Governance Approval
+```
+
+Every authorization decision is audited.
+
+---
+
+# Retrieval Session
+
+Every governed retrieval creates an immutable Retrieval Session.
+
+```yaml
+retrievalSession:
+
+  sessionId:
+
+  knowledgeRecord:
+
+  queryProfile:
+
+  retrievalStrategy:
+
+  semanticFilters:
+
+  vectorFilters:
+
+  graphTraversal:
+
+  retrievedAssets:
+
+  rankingProfile:
+
+  completedAt:
+```
+
+Retrieval Sessions remain immutable.
+
+---
+
+# Runtime Sequence
+
+```mermaid
+sequenceDiagram
+
+Client->>Knowledge API: Search Knowledge
+
+Knowledge API->>Enterprise Catalog: Validate
+
+Enterprise Catalog->>Vector Store: Retrieve Candidates
+
+Vector Store->>Knowledge Graph: Expand Relationships
+
+Knowledge Graph->>Semantic Layer: Rank Results
+
+Semantic Layer-->>Knowledge API: Response
+
+Knowledge API-->>Client: Results
+```
+
+---
+
+# Retrieval Policies
+
+Supported policies
+
+| Policy | Purpose |
+|---------|----------|
+| Classification Filters | Protect sensitive knowledge |
+| Tenant Isolation | Organization separation |
+| Metadata Constraints | Controlled discovery |
+| Semantic Ranking | Relevant results |
+| Freshness | Prefer recent knowledge |
+| Lineage Validation | Trusted provenance |
+
+Policies remain version-controlled.
+
+---
+
+# Distributed Tracing
+
+Every knowledge lifecycle operation includes
+
+- Trace ID
+- Knowledge Asset ID
+- Knowledge Record ID
+- Lineage Record ID
+- Retrieval Session ID
+
+Trace Flow
+
+```text
+Knowledge API
+
+↓
+
+Enterprise Catalog
+
+↓
+
+Metadata Registry
+
+↓
+
+Vector Store
+
+↓
+
+Knowledge Graph
+
+↓
+
+Semantic Layer
+
+↓
+
+Knowledge Ledger
+```
+
+Every stage contributes trace spans.
+
+---
+
+# Prometheus Metrics
+
+```text
+knowledge_assets_total
+
+knowledge_records_total
+
+retrieval_sessions_total
+
+metadata_updates_total
+
+lineage_records_total
+
+vector_queries_total
+
+graph_traversals_total
+
+quality_validation_runs_total
+
+knowledge_retrieval_latency_seconds
+
+knowledge_runtime_health_score
+```
+
+---
+
+# Structured Logging
+
+Example
+
+```json
+{
+  "traceId":"trace-41752",
+  "knowledgeAsset":"KA-214",
+  "knowledgeRecord":"KR-051",
+  "lineageRecord":"LR-022",
+  "retrievalSession":"RS-318",
+  "retrievalStrategy":"Hybrid",
+  "status":"Success"
+}
+```
+
+Logs remain immutable and correlated.
+
+---
+
+# Audit Records
+
+Every knowledge lifecycle operation records
+
+- Knowledge Asset
+- Knowledge Record
+- Lineage Record
+- Retrieval Session
+- Workflow ID
+- Trace ID
+- Timestamp
+- Knowledge Version
+
+Audit history is append-only.
+
+---
+
+# Reference Standards & Specifications
+
+The Knowledge Platform aligns with
+
+| Standard | Purpose |
+|----------|---------|
+| OpenMetadata | Metadata management |
+| Apache Atlas | Data governance & lineage |
+| OpenLineage | Pipeline lineage |
+| OpenTelemetry | Distributed tracing |
+| OpenAPI 3.1 | REST APIs |
+| Apache Iceberg | Table format |
+| Delta Lake | Lakehouse transactions |
+| NIST SP 800-53 | Enterprise security controls |
+
+---
+
+# Architecture Decision Records
+
+## ADR-033-06
+
+### Decision
+
+Represent every governed retrieval as a Retrieval Session.
+
+### Status
+
+Accepted
+
+### Reason
+
+Retrieval Sessions provide replayability, auditability, retrieval analytics, governance evidence, and production observability.
+
+---
+
+## ADR-033-07
+
+### Decision
+
+Separate lineage management from runtime retrieval.
+
+### Status
+
+Accepted
+
+### Reason
+
+Lineage captures provenance, while retrieval captures operational knowledge access and optimization.
+
+---
+
+## ADR-033-08
+
+### Decision
+
+Require governed retrieval before enterprise knowledge consumption.
+
+### Status
+
+Accepted
+
+### Reason
+
+Governed retrieval improves security, trust, explainability, and compliance.
+
+---
+
+# Operational Readiness Scorecard
+
+| Capability | Status |
+|------------|--------|
+| Knowledge Assets | ✅ Required |
+| Knowledge Records | ✅ Required |
+| Lineage Records | ✅ Required |
+| Retrieval Sessions | ✅ Required |
+| Distributed Tracing | ✅ Required |
+| Immutable Audit | ✅ Required |
+| Standards Compliance | ✅ Required |
+| Governed Retrieval | ✅ Required |
+
+---
+
+# Related Documents
+
+ADS-021-v5 — Workflow Kernel
+
+ADS-022-v5 — Identity & Trust Plane
+
+ADS-023-v5 — Enterprise Memory Plane
+
+ADS-024-v5 — Agent Execution Platform
+
+ADS-025-v5 — Compute & Infrastructure Platform
+
+ADS-026-v5 — Security Platform
+
+ADS-027-v5 — Observability Platform
+
+ADS-028-v5 — Governance Platform
+
+ADS-029-v5 — Developer Experience Platform
+
+ADS-030-v5 — Integration & Ecosystem Platform
+
+ADS-031-v5 — Operations & Platform Administration
+
+ADS-032-v5 — AI/ML & Model Lifecycle Platform
+
+ADS-033-v1 — Enterprise Data Platform & Knowledge Fabric
+
+ADS-033-v2 — Data Lifecycle Algorithms & Knowledge Framework
+
+ADS-033-v4 — Runtime & Knowledge Infrastructure
+
+---
+
+# End of Document
