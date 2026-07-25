@@ -347,4 +347,362 @@ Every interaction produces immutable operational evidence.
 
 ---
 
-# End of Part 1
+# Request Validation Pipeline
+
+Every API request follows the same validation pipeline.
+
+```text
+Receive Request
+
+↓
+
+Authenticate Producer
+
+↓
+
+Authorize Topic Access
+
+↓
+
+Validate Event Schema
+
+↓
+
+Validate Payload
+
+↓
+
+Apply Governance Policies
+
+↓
+
+Publish Event
+
+↓
+
+Persist Event Record
+
+↓
+
+Return Response
+```
+
+No event is accepted without completing the validation pipeline.
+
+---
+
+# Authentication
+
+Supported authentication mechanisms
+
+- OAuth 2.1
+- OpenID Connect (OIDC)
+- Mutual TLS (mTLS)
+- JWT Bearer Tokens
+- API Keys (Policy Controlled)
+- SPIFFE / SPIRE Workload Identity
+
+Every producer possesses a verifiable identity.
+
+---
+
+# Authorization
+
+Access decisions evaluate
+
+- Tenant
+- Topic
+- Producer Identity
+- Consumer Group
+- Event Type
+- Schema Version
+- Governance Policies
+
+Authorization flow
+
+```text
+Request
+
+↓
+
+Identity
+
+↓
+
+Policy Engine
+
+↓
+
+Permit / Deny
+
+↓
+
+Audit Record
+```
+
+Authorization remains centrally governed.
+
+---
+
+# Consumer Group Record
+
+Every managed consumer group is represented by an immutable Consumer Group Record.
+
+```yaml
+consumerGroupRecord:
+
+  consumerGroupRecordId:
+
+  consumerGroup:
+
+  subscribedTopics:
+
+  assignedPartitions:
+
+  consumerInstances:
+
+  rebalanceStrategy:
+
+  offsetPolicy:
+
+  operationalStatus:
+
+  lastHeartbeatAt:
+```
+
+Consumer coordination remains independently managed from Topic and Stream state.
+
+---
+
+# Event Contracts
+
+Every event contract defines
+
+- Event Name
+- Schema Version
+- Required Fields
+- Optional Fields
+- Compatibility Policy
+- Deprecation Timeline
+
+Contracts are version-controlled.
+
+---
+
+# Schema Evolution Rules
+
+Supported compatibility modes
+
+| Mode | Description |
+|------|-------------|
+| Backward | New consumers read old events |
+| Forward | Old consumers read new events |
+| Full | Bidirectional compatibility |
+| None | Breaking changes allowed with approval |
+
+Compatibility policies are enforced by the Schema Registry.
+
+---
+
+# Governance Policies
+
+Every topic defines
+
+- Maximum Message Size
+- Allowed Producers
+- Allowed Consumers
+- Retention Duration
+- Replay Permissions
+- Encryption Policy
+- Compliance Classification
+
+Policies remain immutable until versioned.
+
+---
+
+# Distributed Tracing
+
+Trace propagation
+
+```text
+Producer
+
+↓
+
+Event Gateway
+
+↓
+
+Event Broker
+
+↓
+
+Stream Processor
+
+↓
+
+Consumer
+
+↓
+
+Event Ledger
+```
+
+Each stage appends OpenTelemetry spans using the shared Trace ID.
+
+---
+
+# Prometheus Metrics
+
+```text
+event_publications_total
+
+event_publication_failures_total
+
+topic_registrations_total
+
+schema_registrations_total
+
+consumer_groups_total
+
+consumer_rebalances_total
+
+event_replay_requests_total
+
+dead_letter_queue_size
+
+event_delivery_latency_seconds
+
+schema_validation_duration_seconds
+```
+
+Metrics expose real-time operational health.
+
+---
+
+# Structured Logging
+
+Example
+
+```json
+{
+  "eventId":"EV-10021",
+  "eventRecord":"ER-24011",
+  "topic":"orders.created",
+  "consumerGroup":"analytics-service",
+  "traceId":"TRC-932001",
+  "publicationStatus":"Published"
+}
+```
+
+Logs remain immutable and correlated.
+
+---
+
+# API Error Model
+
+Standard error response
+
+```json
+{
+  "code":"EVENT_SCHEMA_VALIDATION_FAILED",
+  "message":"Payload does not conform to schema version 3.",
+  "traceId":"TRC-932001",
+  "timestamp":"2027-05-18T14:22:41Z"
+}
+```
+
+All errors are auditable.
+
+---
+
+# Architecture Decision Records
+
+## ADR-038-04
+
+### Decision
+
+Require schema validation before accepting any event.
+
+### Status
+
+Accepted
+
+### Reason
+
+Prevents invalid events from entering enterprise streams.
+
+---
+
+## ADR-038-05
+
+### Decision
+
+Separate Consumer Group Records from Stream and Topic Records.
+
+### Status
+
+Accepted
+
+### Reason
+
+Consumer lifecycle evolves independently from stream configuration.
+
+---
+
+## ADR-038-06
+
+### Decision
+
+Version all event contracts.
+
+### Status
+
+Accepted
+
+### Reason
+
+Supports long-term compatibility and controlled schema evolution.
+
+---
+
+# Operational Readiness Scorecard
+
+| Capability | Status |
+|------------|--------|
+| REST APIs | ✅ Required |
+| gRPC APIs | ✅ Required |
+| Schema Registry | ✅ Required |
+| Topic Governance | ✅ Required |
+| Consumer Coordination | ✅ Required |
+| OpenTelemetry | ✅ Required |
+| Prometheus Metrics | ✅ Required |
+| Immutable Contracts | ✅ Required |
+
+---
+
+# Related Documents
+
+ADS-021-v5 — Workflow Kernel
+
+ADS-023-v5 — Knowledge & Memory Platform
+
+ADS-025-v5 — Compute & Infrastructure Platform
+
+ADS-026-v5 — Security Platform
+
+ADS-027-v5 — Observability Platform
+
+ADS-030-v5 — Integration & Ecosystem Platform
+
+ADS-037-v5 — Enterprise Edge, IoT & Cyber-Physical Systems Platform
+
+ADS-038-v1 — Architecture
+
+ADS-038-v2 — Event Algorithms & Lifecycle
+
+ADS-038-v4 — Runtime & Event Infrastructure
+
+---
+
+# End of Document
