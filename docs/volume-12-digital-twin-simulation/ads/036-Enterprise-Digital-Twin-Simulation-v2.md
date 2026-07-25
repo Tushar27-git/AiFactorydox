@@ -234,4 +234,334 @@ Predictions precede enterprise recommendations.
 
 ---
 
-# End of Part 1
+# ALG-036-006
+
+## Optimization Engine
+
+Optimization Engine continuously evaluates
+
+- Resource Allocation
+- Capacity Utilization
+- Cost Efficiency
+- Performance Targets
+- Constraint Satisfaction
+- Multi-objective Trade-offs
+
+Optimization recommendations remain explainable.
+
+---
+
+# ALG-036-007
+
+## Synthetic Environment Orchestration
+
+Synthetic Environment manages
+
+- Test Data Generation
+- Virtual Infrastructure
+- AI Agent Simulation
+- Event Injection
+- Failure Scenarios
+- Environmental Isolation
+
+Synthetic environments remain reproducible.
+
+---
+
+# ALG-036-008
+
+## Capacity Planning
+
+Capacity Planning evaluates
+
+- Resource Demand
+- Infrastructure Limits
+- Growth Trends
+- Peak Utilization
+- Bottlenecks
+- Scaling Recommendations
+
+Capacity planning remains deterministic.
+
+---
+
+# Twin Record
+
+Every registered Digital Twin creates a Twin Record.
+
+```yaml
+twinRecord:
+
+  twinRecordId:
+
+  digitalTwin:
+
+  synchronizationState:
+
+  simulationEngine:
+
+  activeScenario:
+
+  healthStatus:
+
+  governanceStatus:
+
+  lifecycleStatus:
+
+  version:
+
+  synchronizedAt:
+```
+
+Twin Records remain immutable.
+
+---
+
+# Digital Twin Lifecycle Stages
+
+| Stage | Purpose |
+|--------|----------|
+| Registered | Twin created |
+| Synchronized | Current state aligned |
+| Simulating | Active execution |
+| Optimized | Recommendations generated |
+| Validated | Results verified |
+| Archived | Historical preservation |
+| Retired | Lifecycle complete |
+
+Simulation lifecycle remains policy-driven.
+
+---
+
+# Scenario Lifecycle
+
+Supported stages
+
+| Stage | Purpose |
+|--------|----------|
+| Defined | Scenario created |
+| Configured | Variables assigned |
+| Executed | Simulation completed |
+| Evaluated | Outcomes analyzed |
+| Approved | Results accepted |
+| Archived | Historical reference |
+
+Scenario history remains reproducible.
+
+---
+
+# Simulation State Machine
+
+```mermaid
+stateDiagram-v2
+
+[*] --> Registered
+
+Registered --> Synchronized
+
+Synchronized --> Simulating
+
+Simulating --> Optimized
+
+Optimized --> Validated
+
+Validated --> Archived
+
+Archived --> Retired
+
+Retired --> [*]
+```
+
+Every Digital Twin follows this lifecycle.
+
+---
+
+# Simulation Pipeline
+
+Every governed simulation follows
+
+```text
+Register Twin
+
+↓
+
+Synchronize State
+
+↓
+
+Configure Scenario
+
+↓
+
+Execute Simulation
+
+↓
+
+Optimize Outcomes
+
+↓
+
+Generate Predictions
+
+↓
+
+Validate Results
+
+↓
+
+Archive
+```
+
+Every simulation remains explainable.
+
+---
+
+# Simulation Metrics
+
+```text
+digital_twins_total
+
+twin_records_total
+
+active_scenarios_total
+
+simulation_runs_total
+
+prediction_jobs_total
+
+optimization_jobs_total
+
+capacity_plans_total
+
+synthetic_environment_runs_total
+
+simulation_latency_seconds
+
+simulation_platform_health_score
+```
+
+---
+
+# Structured Logging
+
+Example
+
+```json
+{
+  "digitalTwin":"DT-214",
+  "twinRecord":"TR-051",
+  "scenario":"SC-094",
+  "predictionConfidence":0.96,
+  "optimizationScore":98.2,
+  "timestamp":"2027-03-08T11:26:41Z"
+}
+```
+
+Logs remain immutable and correlated.
+
+---
+
+# Architecture Decision Records
+
+## ADR-036-03
+
+### Decision
+
+Represent every managed Digital Twin as a Twin Record.
+
+### Status
+
+Accepted
+
+### Reason
+
+Twin Records separate logical enterprise representations from runtime simulation implementations while improving governance, synchronization, reproducibility, and lifecycle management.
+
+---
+
+## ADR-036-04
+
+### Decision
+
+Require scenario isolation for every simulation.
+
+### Status
+
+Accepted
+
+### Reason
+
+Scenario isolation prevents cross-simulation interference, improves reproducibility, and enables safe experimentation.
+
+---
+
+## ADR-036-05
+
+### Decision
+
+Continuously synchronize Digital Twins with enterprise state.
+
+### Status
+
+Accepted
+
+### Reason
+
+Continuous synchronization improves simulation fidelity, prediction accuracy, and operational trust.
+
+---
+
+# Operational Readiness Scorecard
+
+| Capability | Status |
+|------------|--------|
+| Digital Twins | ✅ Required |
+| Twin Records | ✅ Required |
+| Scenario Modeling | ✅ Required |
+| Simulation Execution | ✅ Required |
+| Optimization Engine | ✅ Required |
+| Prediction Engine | ✅ Required |
+| Synthetic Environments | ✅ Required |
+| Capacity Planning | ✅ Required |
+
+---
+
+# Related Documents
+
+ADS-021-v5 — Workflow Kernel
+
+ADS-022-v5 — Identity & Trust Plane
+
+ADS-023-v5 — Enterprise Memory Plane
+
+ADS-024-v5 — Agent Execution Platform
+
+ADS-025-v5 — Compute & Infrastructure Platform
+
+ADS-026-v5 — Security Platform
+
+ADS-027-v5 — Observability Platform
+
+ADS-028-v5 — Governance Platform
+
+ADS-029-v5 — Developer Experience Platform
+
+ADS-030-v5 — Integration & Ecosystem Platform
+
+ADS-031-v5 — Operations & Platform Administration
+
+ADS-032-v5 — AI/ML & Model Lifecycle Platform
+
+ADS-033-v5 — Enterprise Data Platform & Knowledge Fabric
+
+ADS-034-v5 — Enterprise Analytics & Business Intelligence
+
+ADS-035-v5 — Enterprise Collaboration & Productivity Platform
+
+ADS-036-v1 — Enterprise Digital Twin & Simulation Platform
+
+ADS-036-v3 — APIs, Events & Contracts
+
+---
+
+# End of Document
