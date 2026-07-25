@@ -238,4 +238,334 @@ Approvals precede publication and execution.
 
 ---
 
-# End of Part 1
+# ALG-035-006
+
+## Notification Routing
+
+Notification Engine routes
+
+- Task Assignments
+- Approval Requests
+- Meeting Invitations
+- Deadline Reminders
+- System Alerts
+- AI Recommendations
+
+Notifications remain policy-driven.
+
+---
+
+# ALG-035-007
+
+## Calendar Synchronization
+
+Calendar Service coordinates
+
+- Meetings
+- Deadlines
+- Milestones
+- Availability
+- Time Zones
+- Resource Reservations
+
+Calendar synchronization remains deterministic.
+
+---
+
+# ALG-035-008
+
+## Human-AI Collaboration
+
+The Human-AI Collaboration Engine manages
+
+- AI Suggestions
+- Human Review
+- Approval Requests
+- Task Assistance
+- Knowledge Recommendations
+- Decision Support
+
+Humans always retain final authority.
+
+---
+
+# Workspace Record
+
+Every registered workspace creates a Workspace Record.
+
+```yaml
+workspaceRecord:
+
+  workspaceRecordId:
+
+  workspace:
+
+  storageLocation:
+
+  collaborationProfile:
+
+  communicationChannels:
+
+  activeMembers:
+
+  governanceStatus:
+
+  lifecycleStatus:
+
+  version:
+
+  registeredAt:
+```
+
+Workspace Records remain immutable.
+
+---
+
+# Collaboration Lifecycle Stages
+
+| Stage | Purpose |
+|--------|----------|
+| Registered | Workspace created |
+| Active | Collaboration enabled |
+| Governed | Policies enforced |
+| Shared | Cross-team collaboration |
+| Archived | Historical preservation |
+| Restored | Reopened if required |
+| Retired | Permanently closed |
+
+Lifecycle remains policy-driven.
+
+---
+
+# Approval Lifecycle
+
+Supported stages
+
+| Stage | Purpose |
+|--------|----------|
+| Draft | Awaiting submission |
+| Submitted | Pending review |
+| Under Review | Active evaluation |
+| Approved | Accepted |
+| Rejected | Declined |
+| Archived | Historical record |
+
+Approvals remain reproducible.
+
+---
+
+# Collaboration State Machine
+
+```mermaid
+stateDiagram-v2
+
+[*] --> Registered
+
+Registered --> Active
+
+Active --> Governed
+
+Governed --> Shared
+
+Shared --> Archived
+
+Archived --> Restored
+
+Restored --> Active
+
+Archived --> Retired
+
+Retired --> [*]
+```
+
+Every Workspace follows this lifecycle.
+
+---
+
+# Collaboration Pipeline
+
+Every governed collaboration follows
+
+```text
+Create Workspace
+
+↓
+
+Invite Members
+
+↓
+
+Collaborate
+
+↓
+
+Assign Tasks
+
+↓
+
+Review
+
+↓
+
+Approve
+
+↓
+
+Notify
+
+↓
+
+Archive
+```
+
+Every collaboration remains explainable.
+
+---
+
+# Collaboration Metrics
+
+```text
+workspaces_total
+
+workspace_records_total
+
+documents_total
+
+messages_total
+
+meetings_total
+
+tasks_total
+
+approvals_total
+
+notifications_total
+
+calendar_events_total
+
+collaboration_platform_health_score
+```
+
+---
+
+# Structured Logging
+
+Example
+
+```json
+{
+  "workspace":"WS-214",
+  "workspaceRecord":"WR-051",
+  "approvalId":"APR-093",
+  "taskId":"TASK-442",
+  "notification":"MeetingReminder",
+  "timestamp":"2027-02-11T14:37:52Z"
+}
+```
+
+Logs remain immutable and correlated.
+
+---
+
+# Architecture Decision Records
+
+## ADR-035-03
+
+### Decision
+
+Represent every managed collaboration environment as a Workspace Record.
+
+### Status
+
+Accepted
+
+### Reason
+
+Workspace Records separate logical collaboration definitions from managed implementations while improving governance, auditability, lifecycle management, and operational consistency.
+
+---
+
+## ADR-035-04
+
+### Decision
+
+Require human approval for governance-controlled collaboration workflows.
+
+### Status
+
+Accepted
+
+### Reason
+
+Human oversight improves accountability, regulatory compliance, organizational trust, and decision quality.
+
+---
+
+## ADR-035-05
+
+### Decision
+
+Treat AI as an assistive participant rather than an autonomous decision maker.
+
+### Status
+
+Accepted
+
+### Reason
+
+Human-in-the-loop collaboration preserves organizational accountability while benefiting from AI-assisted productivity.
+
+---
+
+# Operational Readiness Scorecard
+
+| Capability | Status |
+|------------|--------|
+| Workspace Definitions | ✅ Required |
+| Workspace Records | ✅ Required |
+| Document Collaboration | ✅ Required |
+| Task Coordination | ✅ Required |
+| Meeting Coordination | ✅ Required |
+| Approval Workflows | ✅ Required |
+| Human-AI Collaboration | ✅ Required |
+| Notification Routing | ✅ Required |
+
+---
+
+# Related Documents
+
+ADS-021-v5 — Workflow Kernel
+
+ADS-022-v5 — Identity & Trust Plane
+
+ADS-023-v5 — Enterprise Memory Plane
+
+ADS-024-v5 — Agent Execution Platform
+
+ADS-025-v5 — Compute & Infrastructure Platform
+
+ADS-026-v5 — Security Platform
+
+ADS-027-v5 — Observability Platform
+
+ADS-028-v5 — Governance Platform
+
+ADS-029-v5 — Developer Experience Platform
+
+ADS-030-v5 — Integration & Ecosystem Platform
+
+ADS-031-v5 — Operations & Platform Administration
+
+ADS-032-v5 — AI/ML & Model Lifecycle Platform
+
+ADS-033-v5 — Enterprise Data Platform & Knowledge Fabric
+
+ADS-034-v5 — Enterprise Analytics & Business Intelligence
+
+ADS-035-v1 — Enterprise Collaboration & Productivity Platform
+
+ADS-035-v3 — APIs, Events & Contracts
+
+---
+
+# End of Document
