@@ -448,4 +448,403 @@ schemaVersion:
 
 ---
 
-# End of Part 1
+# Request Validation
+
+Every analytics lifecycle request follows a deterministic validation pipeline.
+
+```text
+Receive Request
+
+↓
+
+Schema Validation
+
+↓
+
+Authentication
+
+↓
+
+Authorization
+
+↓
+
+Metric Validation
+
+↓
+
+Governance Validation
+
+↓
+
+Quality Validation
+
+↓
+
+Execution
+```
+
+Execution begins only after successful validation.
+
+---
+
+# Validation Rules
+
+Every request MUST satisfy
+
+| Rule | Description |
+|------|-------------|
+| API Version | Supported lifecycle contract |
+| Authentication | Valid identity |
+| Authorization | Approved operation |
+| Metric Version | Registered metric definition |
+| Data Freshness | Within configured refresh policy |
+| Governance | Approved lifecycle stage |
+| Quality | Required confidence threshold met |
+| Tenant | Tenant isolation enforced |
+
+Validation failures reject the request.
+
+---
+
+# Authentication
+
+Analytics authentication supports
+
+- OAuth 2.1
+- Mutual TLS
+- API Keys
+- JWT
+- OpenID Connect
+- SPIFFE / SPIRE
+
+Anonymous analytics operations are prohibited.
+
+---
+
+# Authorization
+
+Authorization evaluates
+
+- User Identity
+- Organization
+- Metric Ownership
+- Dashboard Permissions
+- Report Visibility
+- Governance Policies
+
+Decision
+
+```text
+Allow
+
+↓
+
+Execute
+
+Deny
+
+↓
+
+Reject
+
+Review
+
+↓
+
+Governance Approval
+```
+
+Every authorization decision is audited.
+
+---
+
+# Analytics Session
+
+Every governed analytics execution creates an immutable Analytics Session.
+
+```yaml
+analyticsSession:
+
+  sessionId:
+
+  metricRecords:
+
+  dashboardId:
+
+  reportId:
+
+  queryProfile:
+
+  executionPlan:
+
+  computationProfile:
+
+  resultMetadata:
+
+  executionDuration:
+
+  completedAt:
+```
+
+Analytics Sessions remain immutable.
+
+---
+
+# Runtime Sequence
+
+```mermaid
+sequenceDiagram
+
+Client->>Analytics API: Execute Analytics
+
+Analytics API->>Metrics Registry: Validate
+
+Metrics Registry->>Forecast Engine: Compute
+
+Forecast Engine->>Decision Engine: Analyze
+
+Decision Engine-->>Analytics API: Recommendation
+
+Analytics API-->>Client: Results
+```
+
+---
+
+# Analytics Policies
+
+Supported policies
+
+| Policy | Purpose |
+|---------|----------|
+| Data Freshness | Prevent stale analytics |
+| Metric Governance | Approved metric usage |
+| Threshold Policies | KPI validation |
+| Report Retention | Historical preservation |
+| Dashboard Access | Role-based visibility |
+| Decision Approval | Executive governance |
+
+Policies remain version-controlled.
+
+---
+
+# Distributed Tracing
+
+Every analytics lifecycle operation includes
+
+- Trace ID
+- Metric ID
+- Metric Record ID
+- Decision Report ID
+- Analytics Session ID
+
+Trace Flow
+
+```text
+Analytics API
+
+↓
+
+Metrics Registry
+
+↓
+
+Dashboard Engine
+
+↓
+
+Forecast Engine
+
+↓
+
+Decision Engine
+
+↓
+
+Analytics Ledger
+```
+
+Every stage contributes trace spans.
+
+---
+
+# Prometheus Metrics
+
+```text
+metric_definitions_total
+
+metric_records_total
+
+analytics_sessions_total
+
+dashboard_refresh_total
+
+forecast_execution_total
+
+decision_reports_total
+
+anomaly_events_total
+
+recommendations_total
+
+analytics_execution_latency_seconds
+
+analytics_runtime_health_score
+```
+
+---
+
+# Structured Logging
+
+Example
+
+```json
+{
+  "traceId":"trace-52831",
+  "metricDefinition":"MD-214",
+  "metricRecord":"MR-051",
+  "decisionReport":"DR-032",
+  "analyticsSession":"AS-107",
+  "executionStatus":"Success"
+}
+```
+
+Logs remain immutable and correlated.
+
+---
+
+# Audit Records
+
+Every analytics lifecycle operation records
+
+- Metric Definition
+- Metric Record
+- Decision Report
+- Analytics Session
+- Workflow ID
+- Trace ID
+- Timestamp
+- Metric Version
+
+Audit history is append-only.
+
+---
+
+# Reference Standards & Specifications
+
+The Analytics Platform aligns with
+
+| Standard | Purpose |
+|----------|---------|
+| OpenMetrics | Metric representation |
+| OpenTelemetry | Distributed tracing |
+| OpenAPI 3.1 | REST APIs |
+| Apache Arrow | Analytical data interchange |
+| SQL:2023 | Analytical queries |
+| NIST AI RMF | Decision governance (AI-assisted analytics) |
+| ISO 8000 | Data quality management |
+
+---
+
+# Architecture Decision Records
+
+## ADR-034-06
+
+### Decision
+
+Represent every governed analytics execution as an Analytics Session.
+
+### Status
+
+Accepted
+
+### Reason
+
+Analytics Sessions provide replayability, performance analytics, governance evidence, operational observability, and auditability.
+
+---
+
+## ADR-034-07
+
+### Decision
+
+Separate metric computation from decision generation.
+
+### Status
+
+Accepted
+
+### Reason
+
+Metric calculation and business decisioning evolve independently while preserving reproducibility and governance.
+
+---
+
+## ADR-034-08
+
+### Decision
+
+Require governed metrics before executive reporting.
+
+### Status
+
+Accepted
+
+### Reason
+
+Governed metrics improve consistency, trust, compliance, and executive confidence.
+
+---
+
+# Operational Readiness Scorecard
+
+| Capability | Status |
+|------------|--------|
+| Metric Definitions | ✅ Required |
+| Metric Records | ✅ Required |
+| Decision Reports | ✅ Required |
+| Analytics Sessions | ✅ Required |
+| Distributed Tracing | ✅ Required |
+| Immutable Audit | ✅ Required |
+| Standards Compliance | ✅ Required |
+| Governed Analytics | ✅ Required |
+
+---
+
+# Related Documents
+
+ADS-021-v5 — Workflow Kernel
+
+ADS-022-v5 — Identity & Trust Plane
+
+ADS-023-v5 — Enterprise Memory Plane
+
+ADS-024-v5 — Agent Execution Platform
+
+ADS-025-v5 — Compute & Infrastructure Platform
+
+ADS-026-v5 — Security Platform
+
+ADS-027-v5 — Observability Platform
+
+ADS-028-v5 — Governance Platform
+
+ADS-029-v5 — Developer Experience Platform
+
+ADS-030-v5 — Integration & Ecosystem Platform
+
+ADS-031-v5 — Operations & Platform Administration
+
+ADS-032-v5 — AI/ML & Model Lifecycle Platform
+
+ADS-033-v5 — Enterprise Data Platform & Knowledge Fabric
+
+ADS-034-v1 — Enterprise Analytics & Business Intelligence
+
+ADS-034-v2 — Analytics Algorithms & Decision Intelligence Framework
+
+ADS-034-v4 — Runtime & Analytics Infrastructure
+
+---
+
+# End of Document
