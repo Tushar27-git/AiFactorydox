@@ -238,4 +238,333 @@ Semantic models precede enterprise search.
 
 ---
 
-# End of Part 1
+# ALG-033-006
+
+## Vector Indexing
+
+Vector Indexing validates
+
+- Embedding Model
+- Chunk Strategy
+- Similarity Metric
+- Metadata Mapping
+- Index Configuration
+
+Vector indexes remain versioned.
+
+---
+
+# ALG-033-007
+
+## Data Quality Validation
+
+Quality Engine continuously evaluates
+
+- Completeness
+- Accuracy
+- Consistency
+- Timeliness
+- Uniqueness
+- Validity
+
+Quality scores remain reproducible.
+
+---
+
+# ALG-033-008
+
+## Knowledge Retrieval
+
+Knowledge Retrieval performs
+
+- Catalog Search
+- Semantic Search
+- Vector Similarity
+- Graph Traversal
+- Metadata Filtering
+- Governance Validation
+
+Every retrieval is policy-controlled.
+
+---
+
+# Knowledge Record
+
+Every registered implementation creates a Knowledge Record.
+
+```yaml
+knowledgeRecord:
+
+  knowledgeRecordId:
+
+  knowledgeAsset:
+
+  storageLocation:
+
+  storageType:
+
+  indexingProfile:
+
+  vectorCollection:
+
+  lifecycleStatus:
+
+  governanceStatus:
+
+  qualityScore:
+
+  version:
+
+  registeredAt:
+```
+
+Knowledge Records remain immutable.
+
+---
+
+# Knowledge Lifecycle Stages
+
+| Stage | Purpose |
+|--------|----------|
+| Registered | Asset cataloged |
+| Enriched | Metadata completed |
+| Validated | Quality verified |
+| Governed | Policy approved |
+| Published | Available for consumption |
+| Deprecated | Scheduled replacement |
+| Archived | Historical preservation |
+
+Knowledge lifecycle remains policy-driven.
+
+---
+
+# Lineage Lifecycle
+
+Supported stages
+
+| Stage | Purpose |
+|--------|----------|
+| Captured | Source identified |
+| Linked | Dependencies connected |
+| Validated | Provenance verified |
+| Published | Available for analysis |
+| Updated | Lineage evolved |
+| Archived | Historical lineage |
+
+Lineage remains reproducible.
+
+---
+
+# Knowledge State Machine
+
+```mermaid
+stateDiagram-v2
+
+[*] --> Registered
+
+Registered --> Enriched
+
+Enriched --> Validated
+
+Validated --> Governed
+
+Governed --> Published
+
+Published --> Deprecated
+
+Deprecated --> Archived
+
+Archived --> [*]
+```
+
+Every Knowledge Asset follows this lifecycle.
+
+---
+
+# Retrieval Pipeline
+
+Every governed retrieval follows
+
+```text
+Receive Query
+
+↓
+
+Identity Verification
+
+↓
+
+Governance Validation
+
+↓
+
+Catalog Search
+
+↓
+
+Semantic Expansion
+
+↓
+
+Vector Retrieval
+
+↓
+
+Graph Traversal
+
+↓
+
+Ranking
+
+↓
+
+Response Assembly
+```
+
+Every retrieval remains explainable.
+
+---
+
+# Knowledge Metrics
+
+```text
+knowledge_assets_total
+
+knowledge_records_total
+
+catalog_entries_total
+
+metadata_updates_total
+
+lineage_relationships_total
+
+semantic_models_total
+
+vector_indexes_total
+
+quality_validation_runs_total
+
+knowledge_retrieval_latency_seconds
+
+knowledge_platform_health_score
+```
+
+---
+
+# Structured Logging
+
+Example
+
+```json
+{
+  "knowledgeAsset":"KA-214",
+  "knowledgeRecord":"KR-051",
+  "storageType":"Lakehouse",
+  "qualityScore":98.7,
+  "lineageStatus":"Validated",
+  "timestamp":"2026-12-14T10:22:31Z"
+}
+```
+
+Logs remain immutable and correlated.
+
+---
+
+# Architecture Decision Records
+
+## ADR-033-03
+
+### Decision
+
+Represent every managed implementation as a Knowledge Record.
+
+### Status
+
+Accepted
+
+### Reason
+
+Knowledge Records separate logical knowledge definitions from physical storage implementations while improving governance, portability, and lifecycle management.
+
+---
+
+## ADR-033-04
+
+### Decision
+
+Require lineage generation for every managed knowledge asset.
+
+### Status
+
+Accepted
+
+### Reason
+
+Complete lineage improves trust, reproducibility, compliance, and impact analysis.
+
+---
+
+## ADR-033-05
+
+### Decision
+
+Continuously validate enterprise data quality.
+
+### Status
+
+Accepted
+
+### Reason
+
+Continuous validation maintains reliable enterprise knowledge and improves downstream AI and analytics.
+
+---
+
+# Operational Readiness Scorecard
+
+| Capability | Status |
+|------------|--------|
+| Knowledge Assets | ✅ Required |
+| Knowledge Records | ✅ Required |
+| Metadata Registry | ✅ Required |
+| Data Lineage | ✅ Required |
+| Semantic Modeling | ✅ Required |
+| Vector Indexing | ✅ Required |
+| Data Quality | ✅ Required |
+| Governed Retrieval | ✅ Required |
+
+---
+
+# Related Documents
+
+ADS-021-v5 — Workflow Kernel
+
+ADS-022-v5 — Identity & Trust Plane
+
+ADS-023-v5 — Enterprise Memory Plane
+
+ADS-024-v5 — Agent Execution Platform
+
+ADS-025-v5 — Compute & Infrastructure Platform
+
+ADS-026-v5 — Security Platform
+
+ADS-027-v5 — Observability Platform
+
+ADS-028-v5 — Governance Platform
+
+ADS-029-v5 — Developer Experience Platform
+
+ADS-030-v5 — Integration & Ecosystem Platform
+
+ADS-031-v5 — Operations & Platform Administration
+
+ADS-032-v5 — AI/ML & Model Lifecycle Platform
+
+ADS-033-v1 — Enterprise Data Platform & Knowledge Fabric
+
+ADS-033-v3 — APIs, Events & Contracts
+
+---
+
+# End of Document
