@@ -239,4 +239,401 @@ The Workflow is the immutable definition of a business process.
 
 ---
 
-# End of Part 1
+# Workflow Record
+
+Every execution of a Workflow creates a Workflow Record.
+
+```yaml
+workflowRecord:
+
+  workflowRecordId:
+
+  workflow:
+
+  executionInstance:
+
+  currentState:
+
+  activeTask:
+
+  executionStatus:
+
+  startedAt:
+
+  completedAt:
+```
+
+Workflow Records maintain immutable execution metadata.
+
+---
+
+# Task Record
+
+Every workflow task generates a Task Record.
+
+```yaml
+taskRecord:
+
+  taskRecordId:
+
+  workflowRecord:
+
+  taskName:
+
+  taskType:
+
+  assignedWorker:
+
+  executionStatus:
+
+  retryCount:
+
+  completedAt:
+```
+
+Task Records remain append-only.
+
+---
+
+# Approval Record
+
+Human approvals generate Approval Records.
+
+```yaml
+approvalRecord:
+
+  approvalRecordId:
+
+  workflowRecord:
+
+  approver:
+
+  approvalDecision:
+
+  approvalComments:
+
+  decisionTimestamp:
+
+  approvalStatus:
+```
+
+Approval Records preserve governance evidence.
+
+---
+
+# Workflow Session
+
+Every runtime execution creates a Workflow Session.
+
+```yaml
+workflowSession:
+
+  workflowSessionId:
+
+  workflowRecord:
+
+  activeTasks:
+
+  timers:
+
+  retries:
+
+  compensationState:
+
+  executionContext:
+
+  startedAt:
+
+  endedAt:
+```
+
+Workflow Sessions represent active runtime execution.
+
+---
+
+# Workflow Health Record
+
+Operational health is continuously evaluated.
+
+```yaml
+workflowHealthRecord:
+
+  workflowHealthRecordId:
+
+  workflowSession:
+
+  executionHealth:
+
+  schedulerHealth:
+
+  timerHealth:
+
+  approvalHealth:
+
+  compensationHealth:
+
+  evaluatedAt:
+```
+
+Health remains independent from execution history.
+
+---
+
+# Workflow Runtime Snapshot
+
+The platform periodically generates runtime snapshots.
+
+```yaml
+workflowRuntimeSnapshot:
+
+  snapshotId:
+
+  generatedAt:
+
+  activeWorkflows:
+
+  activeTasks:
+
+  activeTimers:
+
+  pendingApprovals:
+
+  platformHealth:
+
+  throughput:
+```
+
+Snapshots support replay and disaster recovery.
+
+---
+
+# Workflow Ledger Entry
+
+Every completed lifecycle generates an immutable ledger entry.
+
+```yaml
+workflowLedgerEntry:
+
+  entryId:
+
+  workflow:
+
+  workflowRecord:
+
+  taskRecord:
+
+  approvalRecord:
+
+  workflowSession:
+
+  workflowHealthRecord:
+
+  workflowRuntimeSnapshot:
+
+  traceId:
+
+  timestamp:
+
+  digitalSignature:
+```
+
+Ledger Entries provide the authoritative audit history.
+
+---
+
+# Platform Architecture
+
+```mermaid
+flowchart TB
+
+Workflow
+
+-->
+
+WorkflowRecord
+
+WorkflowRecord
+
+-->
+
+TaskRecord
+
+TaskRecord
+
+-->
+
+ApprovalRecord
+
+ApprovalRecord
+
+-->
+
+WorkflowSession
+
+WorkflowSession
+
+-->
+
+WorkflowHealthRecord
+
+WorkflowHealthRecord
+
+-->
+
+WorkflowRuntimeSnapshot
+
+WorkflowRuntimeSnapshot
+
+-->
+
+WorkflowLedgerEntry
+```
+
+Every artifact extends the operational lifecycle without modifying prior artifacts.
+
+---
+
+# Workflow Lifecycle Overview
+
+```text
+Workflow Definition
+
+↓
+
+Workflow Execution
+
+↓
+
+Task Scheduling
+
+↓
+
+Human Approval
+
+↓
+
+Business Processing
+
+↓
+
+Health Evaluation
+
+↓
+
+Runtime Snapshot
+
+↓
+
+Ledger Persistence
+
+↓
+
+Archive
+```
+
+The lifecycle remains deterministic and reproducible.
+
+---
+
+# Platform Guarantees
+
+The Workflow Platform guarantees
+
+- Immutable Workflow Definitions
+- Deterministic Execution
+- Human Approval Governance
+- Replayable Workflow History
+- Distributed Transaction Support
+- Continuous Health Monitoring
+- Immutable Operational History
+
+---
+
+# Architecture Decision Records
+
+## ADR-040-01
+
+### Decision
+
+Represent every workflow execution as immutable operational artifacts.
+
+### Status
+
+Accepted
+
+### Reason
+
+Artifact-centric execution improves governance, replayability, compliance, and observability.
+
+---
+
+## ADR-040-02
+
+### Decision
+
+Separate workflow definitions from runtime execution state.
+
+### Status
+
+Accepted
+
+### Reason
+
+Allows independent versioning, execution scalability, and deterministic replay.
+
+---
+
+## ADR-040-03
+
+### Decision
+
+Model human approvals as independent Approval Records.
+
+### Status
+
+Accepted
+
+### Reason
+
+Supports regulatory compliance, auditability, delegation, and SLA tracking.
+
+---
+
+# Operational Readiness Scorecard
+
+| Capability | Status |
+|------------|--------|
+| Workflow Definitions | ✅ Required |
+| Workflow Execution | ✅ Required |
+| Task Scheduling | ✅ Required |
+| Human Approvals | ✅ Required |
+| Saga Coordination | ✅ Required |
+| Runtime Snapshots | ✅ Required |
+| Immutable Ledger | ✅ Required |
+| Deterministic Replay | ✅ Required |
+
+---
+
+# Related Documents
+
+ADS-021-v5 — Workflow Kernel
+
+ADS-022-v5 — Identity & Trust Plane
+
+ADS-025-v5 — Compute & Infrastructure Platform
+
+ADS-026-v5 — Security Platform
+
+ADS-027-v5 — Observability Platform
+
+ADS-030-v5 — Integration & Ecosystem Platform
+
+ADS-038-v5 — Enterprise Event Streaming, Messaging & Real-Time Data Platform
+
+ADS-039-v5 — Enterprise API Gateway, Service Mesh & Traffic Management Platform
+
+ADS-040-v2 — Workflow Algorithms & Lifecycle
+
+---
+
+# End of Document
